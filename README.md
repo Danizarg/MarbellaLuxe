@@ -4,12 +4,15 @@ A complete redesign of the **CENTURY 21 Luxe Marbella** website — a luxury
 real-estate agency operating across Marbella, Benahavís, Estepona and Sotogrande
 on the Costa del Sol.
 
-The governing idea is that **the property is the product**. A €2M–€10M villa is
-presented with the same discipline a flagship device gets: full-bleed imagery,
-scroll-staged storytelling, restrained type at very large sizes, and
-specification laid out as data rather than as marketing copy.
+The governing idea is that **the property is the product**. The animation budget
+is spent on a single cinematic intro; after that the site is calm — properties are
+presented in a conventional grid, with large photography, full-length descriptions
+and specification laid out as data rather than as marketing copy.
 
-Built on the agency's **real listings, real team and real contact details** —
+It covers the agency's whole business: villas, apartments, penthouses, new
+developments, plots, commercial premises, hotels and long-term rentals, alongside
+valuation, renovations, architectural design, buying agency and development
+advisory. Built on their **real listings, real team and real contact details** —
 this is a working site, not a mockup.
 
 ---
@@ -65,10 +68,12 @@ statically prerendered except `/contact`, which reads a query parameter.
 
 ```
 app/                 routes and the design system (globals.css)
-  properties/        search page + [slug] detail experience
-  sell/ investment/ team/ contact/
+  properties/        search page + [slug] detail experience (24 listings)
+  rentals/           long-term rental schedule
+  services/          service index + [slug] pages (5 services)
+  about/ careers/ sell/ investment/ team/ contact/
 components/          every section of the site, one file each
-lib/                 site.ts · properties.ts · team.ts · locations.ts
+lib/                 site · properties · rentals · services · team · locations
 scripts/             asset pipeline, contact sheets, visual audit
 public/properties/   listing imagery, <REF>/NN.webp
 ```
@@ -78,6 +83,27 @@ from the client's own site and must not be invented** — every value is recorde
 with its source in `CLAUDE_CONTEXT.md`.
 
 ---
+
+## The intro
+
+The homepage opens with a 4.6-second cinematic sequence — property plates
+cross-fading behind the wordmark, the markets cycling, then the panel lifting to
+reveal the hero already settled underneath.
+
+It plays **once per session**, on the homepage only, is skippable from the first
+frame (click Skip, or press Escape / Enter / Space), and never plays for a visitor
+who has asked for reduced motion. Deep links to a property or a service page never
+sit behind it.
+
+To watch it again, open a private window or clear the `mlx-intro-seen` key from
+sessionStorage.
+
+Timings live in `app/globals.css`; the total runtime is mirrored in `RUNTIME_MS`
+in `components/site-intro.tsx` — **change both together**.
+
+Everything after the intro is deliberately quiet: a conventional property grid, an
+editorial spread for the featured residence, and gentle scroll reveals. No
+scroll-jacking.
 
 ## Normal preview mode
 

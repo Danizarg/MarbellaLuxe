@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { locations } from "@/lib/locations";
-import { formatPrice, properties } from "@/lib/properties";
+import { categories, formatPrice, properties, type Category } from "@/lib/properties";
 import { PropertyCard } from "./property-card";
 
 type Sort = "price-desc" | "price-asc" | "built-desc" | "plot-desc";
@@ -15,19 +15,20 @@ const SORTS: { id: Sort; label: string }[] = [
   { id: "plot-desc", label: "Largest plot" },
 ];
 
-const BUDGETS = [0, 2_000_000, 3_500_000, 5_000_000, 8_000_000];
+const BUDGETS = [0, 500_000, 1_000_000, 2_000_000, 3_500_000, 5_000_000, 8_000_000];
 
 /**
- * Filtering runs entirely in the client over a seven-property dataset, which is
- * the honest shape of this build. Against the live Resales feed the same control
+ * Filtering runs in the client over the full portfolio, which is the honest
+ * shape of this build. Against the live Resales-Online feed the same control
  * surface would post to the API; the filter state model would not change.
  *
- * Initial state is seeded from the query string so the homepage search bar and
- * shared links both land here with filters already applied.
+ * Initial state is seeded from the query string, so the homepage search bar,
+ * the footer category links and shared URLs all land here with filters applied.
  */
 export function PropertySearch() {
   const params = useSearchParams();
 
+  const [category, setCategory] = useState(params.get("category") ?? "");
   const [region, setRegion] = useState(params.get("region") ?? "");
   const [min, setMin] = useState(params.get("min") ?? "0");
   const [beds, setBeds] = useState(params.get("beds") ?? "0");
@@ -35,10 +36,14 @@ export function PropertySearch() {
 
   const results = useMemo(() => {
     const filtered = properties.filter(
-      (p) => (!region || p.region === region) && p.price >= Number(min) && p.beds >= Number(beds),
+      (p) =>
+        (!category || p.category === (category as Category)) &&
+        (!region || p.region === region) &&
+        p.price >= Number(min) &&
+        p.beds >= Number(beds),
     );
 
-    return filtered.sort((a, b) => {
+    return [...filtered].sort((a, b) => {
       switch (sort) {
         case "price-asc":
           return a.price - b.price;
@@ -50,11 +55,12 @@ export function PropertySearch() {
           return b.price - a.price;
       }
     });
-  }, [region, min, beds, sort]);
+  }, [category, region, min, beds, sort]);
 
-  const isFiltered = region !== "" || min !== "0" || beds !== "0";
+  const isFiltered = category !== "" || region !== "" || min !== "0" || beds !== "0";
 
   const reset = () => {
+    setCategory("");
     setRegion("");
     setMin("0");
     setBeds("0");
@@ -63,8 +69,19 @@ export function PropertySearch() {
   return (
     <>
       {/* Filter bar — sticks under the header so it is never more than a glance away */}
-      <div className="sticky top-16 z-40 border-y border-[var(--color-ink-hairline)] bg-ink/85 backdrop-blur-xl">
-        <div className="shell flex flex-wrap items-center gap-x-8 gap-y-4 py-4">
+      <div className="sticky top-16 z-40 border-y border-[var(--color-ink-hairline)] bg-ink/90 backdrop-blur-xl">
+        <div className="shell flex flex-wrap items-center gap-x-7 gap-y-3 py-4">
+          <Control label="Type" value={category} onChange={setCategory}>
+            <option value="" className="bg-ink">
+              All types
+            </option>
+            {categories.map((c) => (
+              <option key={c} value={c} className="bg-ink">
+                {c}
+              </option>
+            ))}
+          </Control>
+
           <Control label="Location" value={region} onChange={setRegion}>
             <option value="" className="bg-ink">
               All markets
@@ -85,7 +102,7 @@ export function PropertySearch() {
           </Control>
 
           <Control label="Beds" value={beds} onChange={setBeds}>
-            {[0, 4, 5, 6, 7, 8].map((b) => (
+            {[0, 2, 3, 4, 5, 6, 7].map((b) => (
               <option key={b} value={String(b)} className="bg-ink">
                 {b === 0 ? "Any" : `${b}+`}
               </option>
@@ -132,10 +149,11 @@ export function PropertySearch() {
           </div>
         ) : (
           <div className="py-24 text-center">
-            <p className="display text-3xl text-bone">Nothing matches that, yet.</p>
-            <p className="measure mx-auto mt-5 text-sm leading-relaxed text-mist">
-              Our off-market list is longer than our published one. Tell us what you are looking
-              for and we will check it against what has not been listed.
+            <p className="display text-3xl text-bone">Nothing matches that combination.</p>
+            <p className="mx-auto mt-5 max-w-[52ch] text-sm leading-relaxed text-mist">
+              Our off-market list is considerably longer than our published one, and a good
+              proportion of the best properties on this coast never reach a portal at all. Tell us
+              what you are looking for and we will check it against what has not been listed.
             </p>
             <button
               type="button"

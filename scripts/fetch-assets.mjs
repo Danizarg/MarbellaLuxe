@@ -22,14 +22,21 @@ for (const prop of manifest.properties) {
   const dir = path.join(root, "public/properties", prop.ref);
   await mkdir(dir, { recursive: true });
 
+  const size = prop.size ?? "w1200";
+  const filenames = manifest.filenames[size];
+  if (!filenames) {
+    console.warn(`skip ${prop.ref}: no filename set for ${size}`);
+    continue;
+  }
+
   for (let i = 0; i < prop.count; i++) {
-    const file = manifest.filenames[i];
+    const file = filenames[i];
     if (!file) break;
 
     const out = path.join(dir, String(i + 1).padStart(2, "0") + ".webp");
     if (await access(out).then(() => true, () => false)) continue;
 
-    const url = `${manifest.cdnBase}/${prop.key}/properties/${prop.uuid}/w${manifest.maxWidth}/${file}?v=${prop.v}`;
+    const url = `${manifest.cdnBase}/${prop.key}/properties/${prop.uuid}/${size}/${file}?v=${prop.v}`;
     const res = await fetch(url);
     if (!res.ok) {
       console.warn(`skip ${prop.ref}/${i + 1}: HTTP ${res.status}`);

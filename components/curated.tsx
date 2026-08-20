@@ -1,80 +1,47 @@
-"use client";
-
-import { useRef } from "react";
 import { properties } from "@/lib/properties";
 import { PropertyCard } from "./property-card";
+import { PLink } from "./proposal";
 import { SectionHead } from "./section-head";
 
 /**
- * A scroll-snapped rail rather than a grid.
+ * A conventional three-column grid.
  *
- * A grid asks you to compare seven houses at once; a rail asks you to look at
- * one and then decide to see the next. On desktop the arrows step by exactly one
- * card so the rhythm never breaks.
+ * An earlier version used a horizontally scroll-snapped rail. It looked good and
+ * it made comparing properties harder, which is the wrong trade for the part of
+ * the site people actually came for: the animation budget is spent on the intro,
+ * and the listings are presented the way listings should be.
  */
 export function Curated() {
-  const rail = useRef<HTMLDivElement>(null);
-
-  const step = (dir: 1 | -1) => {
-    const el = rail.current;
-    if (!el) return;
-    const card = el.querySelector<HTMLElement>("[data-card]");
-    const by = card ? card.offsetWidth + 32 : el.clientWidth * 0.8;
-    el.scrollBy({ left: by * dir, behavior: "smooth" });
-  };
+  const featured = properties.slice(0, 6);
 
   return (
-    <section id="portfolio" className="py-24 md:py-36">
+    <section id="portfolio" className="py-24 md:py-32">
       <div className="shell">
         <SectionHead
-          eyebrow="The portfolio"
-          title="Seven residences, currently."
-          copy="A deliberately small list. Every property here is one we would show in person, across Marbella, Benahavís, Estepona and Sotogrande."
+          eyebrow="Selected properties"
+          title="A short list, kept deliberately short."
+          copy="We publish a fraction of what we have access to. These are the properties we would put in front of you first — villas, apartments and penthouses across Marbella, Benahavís, Estepona, Sotogrande and Mijas. The full portfolio, including plots, new developments and commercial, sits behind the search."
           action={
-            <div className="hidden gap-2 md:flex">
-              <RailButton onClick={() => step(-1)} label="Previous" glyph="←" />
-              <RailButton onClick={() => step(1)} label="Next" glyph="→" />
-            </div>
+            <PLink
+              href="/properties"
+              className="inline-flex items-center gap-3 whitespace-nowrap border border-[var(--rule)] px-6 py-3.5 text-[0.72rem] uppercase tracking-[0.18em] text-bone transition-colors duration-500 hover:border-gold hover:bg-gold hover:text-ink"
+            >
+              View all {properties.length} properties
+            </PLink>
           }
         />
-      </div>
 
-      <div
-        ref={rail}
-        className="rail mt-16 flex gap-8 overflow-x-auto px-[var(--shell)] pb-4"
-      >
-        {properties.map((property, i) => (
-          <div
-            key={property.ref}
-            data-card
-            className="reveal w-[86vw] shrink-0 sm:w-[58vw] lg:w-[30rem]"
-          >
-            <PropertyCard property={property} priority={i < 2} />
-          </div>
-        ))}
-        <div className="w-px shrink-0" aria-hidden />
+        <div className="mt-16 grid gap-x-8 gap-y-16 md:grid-cols-2 xl:grid-cols-3">
+          {featured.map((property, i) => (
+            <PropertyCard
+              key={property.ref}
+              property={property}
+              priority={i < 3}
+              className="reveal"
+            />
+          ))}
+        </div>
       </div>
     </section>
-  );
-}
-
-function RailButton({
-  onClick,
-  label,
-  glyph,
-}: {
-  onClick: () => void;
-  label: string;
-  glyph: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="grid h-11 w-11 place-items-center border border-[var(--color-ink-hairline)] text-mist transition-colors duration-500 hover:border-gold hover:text-gold"
-    >
-      {glyph}
-    </button>
   );
 }

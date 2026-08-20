@@ -1,3 +1,4 @@
+import { SiteIntro } from "@/components/site-intro";
 import { Hero } from "@/components/hero";
 import { Curated } from "@/components/curated";
 import { FlagshipStory } from "@/components/flagship-story";
@@ -10,13 +11,17 @@ import { TeamPreview } from "@/components/team-preview";
 import { ContactSection } from "@/components/contact-section";
 
 /**
- * Homepage order is deliberate: one property, then the portfolio, then the
- * flagship at length, then the two ways buyers narrow down (place, then quality),
- * then search. Sellers and investors come after the buying story, not before it.
+ * The intro plays once per session and only here, on the way in. Deep links to a
+ * property or a service page never sit behind an animation.
+ *
+ * Section order is deliberate: the portfolio, then the featured residence at
+ * length, then the two ways buyers narrow down — place, then quality — then
+ * search. Sellers and investors come after the buying story, not before it.
  */
 export default function HomePage() {
   return (
     <>
+      <SiteIntro />
       <Hero />
       <Curated />
       <FlagshipStory />

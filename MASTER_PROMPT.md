@@ -50,20 +50,68 @@ The redesign must cover all of the following.
 
 | # | Section | Requirement |
 |---|---|---|
-| 1 | **Cinematic hero** | One property, full-bleed, staged entrance. Not a slogan over a stock photo. |
-| 2 | **Curated properties** | A small, deliberate selection — not a dump of the whole feed. |
-| 3 | **Flagship property storytelling** | The most expensive listing gets several screens of scroll-told attention. |
-| 4 | **Location explorer** | Marbella / Benahavís / Estepona / Sotogrande, explored one market at a time. |
-| 5 | **Property feature explorer** | Architecture / Interiors / Views / Location / Lifestyle selector. |
-| 6 | **Property search** | Filterable, with results that update live. |
-| 7 | **Property detail experience** | Hero, specification strip, narrative, gallery with lightbox, related properties. |
-| 8 | **Team** | The real team, with real roles and languages. |
-| 9 | **Seller section** | Valuation and marketing services for owners. |
-| 10 | **Investment section** | Purchase costs and the buying-from-abroad case. |
-| 11 | **Contact** | Real office, phone, email; a working enquiry path. |
-| 12 | **Proposal mode** | See §6. |
+| 1 | **Animated intro** | A full cinematic opener in front of the site. See §3a. |
+| 2 | **Cinematic hero** | One property, full-bleed, staged entrance. Not a slogan over a stock photo. |
+| 3 | **Curated properties** | A small, deliberate selection — not a dump of the whole feed. |
+| 4 | **Featured property feature** | The most expensive listing gets an extended editorial spread. |
+| 5 | **Location explorer** | Every market the agency trades in, explored one at a time. |
+| 6 | **Property feature explorer** | Architecture / Interiors / Views / Location / Lifestyle selector. |
+| 7 | **Property search** | Filterable by type, market, budget and bedrooms, updating live. |
+| 8 | **Property detail experience** | Hero, specification strip, narrative, gallery with lightbox, related properties. |
+| 9 | **Rentals** | Long-term rentals, plus short-term and landlord services. |
+| 10 | **Services** | Valuation, renovations, architect studio, buying agent, developers. |
+| 11 | **Team** | The real team, with real roles and languages. |
+| 12 | **Seller section** | Valuation and marketing services for owners. |
+| 13 | **Investment section** | Purchase costs and the buying-from-abroad case. |
+| 14 | **About & careers** | Who the agency is, and how to work for it. |
+| 15 | **Contact** | Real office, phone, email; a working enquiry path. |
+| 16 | **Proposal mode** | See §6. |
+
+### Full content coverage — required
+
+The redesign must cover the agency's **whole business**, not just villa sales. That
+means every property type they trade in — villas, apartments, penthouses, new
+developments, plots and land, commercial premises, hotels, and rentals — and every
+service they publish. A redesign that quietly drops their rentals, commercial or
+renovations business is not a redesign of their site.
+
+Where the live site spreads one subject across several near-identical pages (five
+"Renovations <town>" pages, for instance), consolidate rather than reproduce.
 
 ---
+
+## 3a. Where the animation goes
+
+**The intro is animated. The site is not.**
+
+- The **intro** is a full cinematic opener — plates cross-fading behind the
+  wordmark, the markets cycling, and the panel lifting to reveal the hero. Spend
+  the animation budget here.
+- **Everything after it is presented normally.** Properties appear in a
+  conventional grid. The featured residence is a magazine spread, not a
+  scroll-hijacked stage. Sections reveal gently on scroll and otherwise stay
+  still.
+- The intro plays **once per session**, on the homepage only. Deep links to a
+  property or a service never sit behind an animation. It is skippable from the
+  first frame and never plays for a visitor who has asked for reduced motion.
+
+Scroll-jacking, pinned stages and multi-screen scroll narratives are explicitly
+out of scope for the property pages. They demo well and they make the most
+expensive property on the site harder to read than the cheapest.
+
+## 3b. Writing
+
+**Write normally.** Full sentences, real paragraphs, the register of a good estate
+agency that respects its reader.
+
+- Property descriptions run to three or four substantial paragraphs, not three
+  clipped lines. Say what the house is, how it is arranged, what the plot does,
+  and what the area actually offers.
+- Section copy carries two paragraphs where one would leave the reader short.
+- Avoid the aphoristic, clipped, one-clause-per-line style. It reads as styling
+  rather than as information, and buyers spending millions want information.
+- Never pad. Fuller does not mean vaguer — every added sentence should carry a
+  fact, a number or a genuine judgement.
 
 ## 3. Art direction rules
 

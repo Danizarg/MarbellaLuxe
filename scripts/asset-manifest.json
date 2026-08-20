@@ -1,33 +1,45 @@
 {
-  "_note": "Source manifest for property imagery. Images are served from the client's own listing feed CDN (Resales-Online). w1200 is the largest real derivative the CDN exposes; every larger key returns a 2.5KB placeholder. Run `npm run assets` to re-download into /public/properties.",
+  "_note": "Source manifest for property imagery. Images come from the client's own listing feed (Resales-Online). Run `npm run assets` to download into /public/properties. Nothing is hotlinked at runtime.",
+  "_sizes": "Sale listings are served at w1200 with one shared filename sequence. Rental listings (-L refs) are served at w800 with a different sequence, hence the two filename sets.",
   "cdnBase": "https://cdn.resales-online.com/public",
-  "maxWidth": 1200,
-  "filenames": [
-    "1-7980e48d732b6fc85c14b43b94d2aa54.jpg",
-    "2-5bd7b9d04b45e33852eaf0ec6670150d.jpg",
-    "3-e898b2bb2a2fdfd06d2c39894dce8316.jpg",
-    "4-c23c0f86247804fa50226aecd8b0b2c8.jpg",
-    "5-3595ad71cbd87be6c3643a4285ef4791.jpg",
-    "6-241328e1bcc9c0d8ce1222beb6c967a8.jpg",
-    "7-aa4cc561180b369757c0bb4af9886cd3.jpg",
-    "8-e64a9055bba3e77ac8aca3b893cdf826.jpg",
-    "9-467d0cee5b725f3ef65f102a0c2e69c0.jpg",
-    "10-bb915d1cb19341576dcdc994b81ab9c5.jpg",
-    "11-20939a0134ad724a8cb2a801094d15a4.jpg",
-    "12-53013098fcab6c38b1379cd33298e050.jpg",
-    "13-5fd73dea700db77384c091ca9818b1a9.jpg",
-    "14-d70dc3102c00d7be0e872dfe1c1f86d7.jpg",
-    "15-11d12f2f454f2f5e9b981fdd8b901d51.jpg",
-    "16-ec67b526875bf0124b6ce4328a754439.jpg",
-    "17-dd5fcd4f0eb487dfa3803f7e20814c0e.jpg",
-    "18-cc72f169493c096e712837ff5d8b6e41.jpg",
-    "19-d0ed7da2012a09046d307c195d98e7d6.jpg",
-    "20-d1f7658cbe4ba6cd8666fec30fba80ad.jpg",
-    "21-2c707e7c511429b4f8ec4ee5f221ddb6.jpg",
-    "22-bcf8e6250e0bab365f900a8ac31ac040.jpg",
-    "23-79897b85162c6a486c7a4d1eb46924dd.jpg",
-    "24-613bbc26f32d7013d348ef202dd30a43.jpg"
-  ],
+  "filenames": {
+    "w1200": [
+      "1-7980e48d732b6fc85c14b43b94d2aa54.jpg",
+      "2-5bd7b9d04b45e33852eaf0ec6670150d.jpg",
+      "3-e898b2bb2a2fdfd06d2c39894dce8316.jpg",
+      "4-c23c0f86247804fa50226aecd8b0b2c8.jpg",
+      "5-3595ad71cbd87be6c3643a4285ef4791.jpg",
+      "6-241328e1bcc9c0d8ce1222beb6c967a8.jpg",
+      "7-aa4cc561180b369757c0bb4af9886cd3.jpg",
+      "8-e64a9055bba3e77ac8aca3b893cdf826.jpg",
+      "9-467d0cee5b725f3ef65f102a0c2e69c0.jpg",
+      "10-bb915d1cb19341576dcdc994b81ab9c5.jpg",
+      "11-20939a0134ad724a8cb2a801094d15a4.jpg",
+      "12-53013098fcab6c38b1379cd33298e050.jpg",
+      "13-5fd73dea700db77384c091ca9818b1a9.jpg",
+      "14-d70dc3102c00d7be0e872dfe1c1f86d7.jpg",
+      "15-11d12f2f454f2f5e9b981fdd8b901d51.jpg",
+      "16-ec67b526875bf0124b6ce4328a754439.jpg",
+      "17-dd5fcd4f0eb487dfa3803f7e20814c0e.jpg",
+      "18-cc72f169493c096e712837ff5d8b6e41.jpg",
+      "19-d0ed7da2012a09046d307c195d98e7d6.jpg",
+      "20-d1f7658cbe4ba6cd8666fec30fba80ad.jpg",
+      "21-2c707e7c511429b4f8ec4ee5f221ddb6.jpg",
+      "22-bcf8e6250e0bab365f900a8ac31ac040.jpg",
+      "23-79897b85162c6a486c7a4d1eb46924dd.jpg",
+      "24-613bbc26f32d7013d348ef202dd30a43.jpg"
+    ],
+    "w800": [
+      "1-84e341d8bbd82f345ae3462e12485f3f.jpg",
+      "2-0826ca12e42a31167a8dc7ca15bb2a66.jpg",
+      "3-b5ba43a27d5283141e7a32785ded8d28.jpg",
+      "4-c3b9cad80af0dc32e7667768d5882d4c.jpg",
+      "5-af377007b44d93cf90987a7a48ac56c3.jpg",
+      "6-1eb4db76fe2c0bd70b930832334fda90.jpg",
+      "7-2e4873f720ead5353d5e9b8763bc8a64.jpg",
+      "8-5410eee8fdd48317c3ce0dd6d88c1530.jpg"
+    ]
+  },
   "properties": [
     {
       "ref": "R5374861",
@@ -77,14 +89,136 @@
       "uuid": "96517c618a7911f182490652962539d5",
       "v": "1785243381",
       "count": 14
+    },
+    {
+      "ref": "R5464111",
+      "key": "jja1jz8h5h8asjid",
+      "uuid": "be1c920d9bde11f182490652962539d5",
+      "v": "1787155375",
+      "count": 8
+    },
+    {
+      "ref": "R5464102",
+      "key": "0dajlvabho",
+      "uuid": "729d481e9bdb11f182490652962539d5",
+      "v": "1787153825",
+      "count": 8
+    },
+    {
+      "ref": "R5464096",
+      "key": "kj4s0e6mui",
+      "uuid": "ecf9de949bd911f182490652962539d5",
+      "v": "1787153464",
+      "count": 8
+    },
+    {
+      "ref": "R5464078",
+      "key": "55vl5kt3q3svd54y",
+      "uuid": "09953e569bd311f182490652962539d5",
+      "v": "1787150800",
+      "count": 8
+    },
+    {
+      "ref": "R5164585",
+      "key": "qo5j1520bm239fbw",
+      "uuid": "30ec5fdc946f11f086ca02a3ded47a2d",
+      "v": "1787157208",
+      "count": 8
+    },
+    {
+      "ref": "R5463838",
+      "key": "wklzjmwuir",
+      "uuid": "198275959bb811f182490652962539d5",
+      "v": "1787139613",
+      "count": 8
+    },
+    {
+      "ref": "R5443516",
+      "key": "cdugn808as",
+      "uuid": "aacf951c84fe11f182490652962539d5",
+      "v": "1786012864",
+      "count": 8
+    },
+    {
+      "ref": "R5461963",
+      "key": "dmbme36kle",
+      "uuid": "dce82a1799f811f182490652962539d5",
+      "v": "1786946556",
+      "count": 5
+    },
+    {
+      "ref": "R5457280",
+      "key": "bd0r4494pg",
+      "uuid": "57317b1a949411f182490652962539d5",
+      "v": "1786353626",
+      "count": 8
+    },
+    {
+      "ref": "R5444944-N",
+      "key": "286a05912d1e446a",
+      "uuid": "85ge3518emfbhjn",
+      "v": "1787214812",
+      "count": 8
+    },
+    {
+      "ref": "R4974751-N",
+      "key": "ul4js3p2ru",
+      "uuid": "kk2gibbel6lvwgx",
+      "v": "1787223700",
+      "count": 8
+    },
+    {
+      "ref": "R5443351-N",
+      "key": "vd3be5h9r8",
+      "uuid": "g8sztzbh8mcvzid",
+      "v": "1787126426",
+      "count": 8
+    },
+    {
+      "ref": "R5453572-N",
+      "key": "vtxmin9hgr",
+      "uuid": "fb1rj8rth8dtcfm",
+      "v": "1785919257",
+      "count": 8
+    },
+    {
+      "ref": "R5464654",
+      "key": "53ixeifnp1fgmtpa",
+      "uuid": "48a9909d9c8311f182490652962539d5",
+      "v": "1787227140",
+      "count": 8
+    },
+    {
+      "ref": "R5455462",
+      "key": "rfgveirpdm",
+      "uuid": "054fe900918b11f182490652962539d5",
+      "v": "1786020046",
+      "count": 6
+    },
+    {
+      "ref": "R4943824",
+      "key": "c5qxxwzfkp",
+      "uuid": "4c267cfae08a11ef8ce602e0405b089b",
+      "v": "1738410980",
+      "count": 8
+    },
+    {
+      "ref": "R5396800",
+      "key": "txv46fuv30",
+      "uuid": "06e9f6eb5b1611f182490652962539d5",
+      "v": "1784092940",
+      "count": 8
     }
   ],
   "_excluded": {
-    "reason": "Feed images carry a burned-in CDN watermark (e.g. \"wuap72y7is\", \"or91yu86l1\"). Unusable at luxury presentation scale — excluded from the redesign until the client supplies unwatermarked masters.",
+    "reason": "Feed images carry a burned-in CDN watermark (keys wuap72y7is, or91yu86l1, 8usg2qssqc), or the only available frames are unusable at presentation scale (R5449183). Excluded until the client supplies replacements.",
     "refs": [
       "R5459710",
       "R4661893",
-      "R5448664"
+      "R5448664",
+      "R5410183",
+      "R5449183"
     ]
-  }
+  },
+  "_rentals": "Every long/short-term rental listing (-L refs) is served under CDN key wuap72y7is, which watermarks all of its output. The rentals section is therefore built without photography - see CLAUDE_CONTEXT.md."
 }

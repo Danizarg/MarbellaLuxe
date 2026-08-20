@@ -15,7 +15,10 @@ export function TeamPreview() {
         <SectionHead
           eyebrow="The team"
           title="Nine languages, one office."
-          copy={`Two brokers and eight consultants working across ${site.languages.length} languages, with more than ${site.experienceYears} years on this coast between them.`}
+          copy={[
+            `Two brokers and eight sales consultants working across ${site.languages.length} languages, with more than ${site.experienceYears} years on this coast between them.`,
+            "Most of our clients are buying in a country they do not live in, often in a language that is not their first, under a legal process that looks nothing like the one at home. That is the problem this team was assembled to solve, and it is why the person who answers your first email is the person who stands next to you at the notary.",
+          ]}
           action={
             <PLink
               href="/team"

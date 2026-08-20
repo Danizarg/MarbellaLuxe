@@ -35,13 +35,26 @@ const SHOTS = [
   ["home-sell", "/", "#sell", 0],
   ["properties", "/properties", null, 0],
   ["properties-grid", "/properties", null, 700],
-  ["detail", "/properties/guadalmina-baja-villa", null, 0],
+  ["properties-plots", "/properties?category=Plot", null, 500],
+  ["detail-villa", "/properties/guadalmina-baja-villa", null, 0],
   ["detail-story", "/properties/guadalmina-baja-villa", null, 900],
-  ["detail-gallery", "/properties/guadalmina-baja-villa", null, 2200],
+  ["detail-gallery", "/properties/guadalmina-baja-villa", null, 2400],
+  ["detail-apartment", "/properties/puerto-banus-apartment", null, 0],
+  ["detail-plot", "/properties/cerros-del-aguila-land", null, 700],
+  ["detail-hotel", "/properties/estepona-hotel", null, 700],
+  ["rentals", "/rentals", null, 0],
+  ["rentals-table", "/rentals", null, 700],
+  ["services", "/services", null, 0],
+  ["service-valuation", "/services/valuation", null, 0],
+  ["service-steps", "/services/renovations", null, 1400],
+  ["about", "/about", null, 0],
+  ["about-body", "/about", null, 800],
+  ["careers", "/careers", null, 500],
   ["team", "/team", null, 0],
   ["sell", "/sell", null, 0],
   ["investment", "/investment", null, 0],
   ["contact", "/contact", null, 0],
+  ["footer", "/about", "footer", 0],
   ["proposal", "/?proposal=true", null, 0],
   ["not-found", "/does-not-exist", null, 0],
 ];
@@ -64,6 +77,16 @@ for (const [label, width, height] of VIEWPORTS) {
 
   for (const [name, route, selector, fallbackY] of SHOTS) {
     await page.goto(BASE + route, { waitUntil: "networkidle" });
+
+    // Skip the intro so section screenshots are not obscured by it.
+    await page.evaluate(() => {
+      try {
+        sessionStorage.setItem("mlx-intro-seen", "1");
+      } catch {}
+    });
+    if (route === "/" || route.startsWith("/?")) {
+      await page.reload({ waitUntil: "networkidle" });
+    }
 
     await page.evaluate(
       ([sel, y]) => {

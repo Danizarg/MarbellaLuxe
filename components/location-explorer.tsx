@@ -22,8 +22,11 @@ export function LocationExplorer() {
       <div className="shell">
         <SectionHead
           eyebrow="Where we work"
-          title="Four markets, twenty minutes apart."
-          copy="The Costa del Sol is not one market. A house moves by several million euros depending on which side of a ridge it sits on — this is how the four we cover differ."
+          title="Five markets, twenty minutes apart."
+          copy={[
+            "The Costa del Sol is not one market, and treating it as one is the most expensive mistake a buyer makes here. A house moves by several million euros depending on which side of a ridge it sits on, how far it is from the water, and whether the plot behind it can ever be built on.",
+            "These are the five markets we work in, what distinguishes each of them, and the sub-areas within them that actually determine price.",
+          ]}
         />
 
         <div className="reveal mt-16 grid gap-10 lg:grid-cols-12 lg:gap-14">
@@ -90,7 +93,14 @@ export function LocationExplorer() {
             </div>
 
             <div className="mt-8">
-              <p className="measure text-base leading-relaxed text-mist">{current.copy}</p>
+              {current.copy.map((paragraph, i) => (
+                <p
+                  key={i}
+                  className={`max-w-[62ch] text-base leading-relaxed text-mist ${i ? "mt-5" : ""}`}
+                >
+                  {paragraph}
+                </p>
+              ))}
               <ul className="mt-7 flex flex-wrap gap-x-3 gap-y-2">
                 {current.areas.map((area) => (
                   <li

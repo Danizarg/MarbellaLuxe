@@ -2,9 +2,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import {
+  bathsLabel,
+  bedsLabel,
   formatArea,
-  formatPrice,
   imageSrc,
+  isLand,
+  priceLabel,
   properties,
   propertyBySlug,
 } from "@/lib/properties";
@@ -33,7 +36,14 @@ export default async function PropertyPage({ params }: Params) {
   const property = propertyBySlug((await params).slug);
   if (!property) notFound();
 
-  const others = properties.filter((p) => p.ref !== property.ref).slice(0, 3);
+  const showRooms = !isLand(property) && property.beds > 0;
+
+  /* Related: same category first, then anything else, so a building plot never
+     sits under three villas as though it were a like-for-like alternative. */
+  const others = [
+    ...properties.filter((p) => p.ref !== property.ref && p.category === property.category),
+    ...properties.filter((p) => p.ref !== property.ref && p.category !== property.category),
+  ].slice(0, 3);
 
   return (
     <>
@@ -51,11 +61,11 @@ export default async function PropertyPage({ params }: Params) {
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ink/70 to-transparent" />
 
         <div className="shell relative flex h-full flex-col justify-end pb-14">
-          <p className="rise eyebrow">{property.location}</p>
-          <h1 className="rise display mt-5 text-[clamp(2.75rem,8vw,7rem)]">
-            {property.name}
-          </h1>
-          <p className="rise measure mt-6 text-base leading-relaxed text-mist">
+          <p className="rise eyebrow">
+            {property.category} · {property.location}
+          </p>
+          <h1 className="rise display mt-5 text-[clamp(2.75rem,8vw,7rem)]">{property.name}</h1>
+          <p className="rise mt-6 max-w-[60ch] text-base leading-relaxed text-mist md:text-[1.0625rem]">
             {property.standfirst}
           </p>
         </div>
@@ -63,30 +73,39 @@ export default async function PropertyPage({ params }: Params) {
 
       {/* Specification */}
       <section className="shell -mt-px">
-        <dl className="numeric grid grid-cols-2 gap-px border border-[var(--color-ink-hairline)] bg-[var(--color-ink-hairline)] md:grid-cols-4 lg:grid-cols-7">
-          <Cell label="Guide price" value={formatPrice(property.price)} accent />
-          <Cell label="Bedrooms" value={String(property.beds)} />
-          <Cell label="Bathrooms" value={String(property.baths)} />
-          <Cell label="Built" value={formatArea(property.built)} />
-          <Cell label="Plot" value={formatArea(property.plot)} />
-          <Cell
-            label="Terrace"
-            value={property.terrace ? formatArea(property.terrace) : "—"}
-          />
+        {/* auto-fit rather than a fixed column count: a building plot renders three
+            cells and a hotel renders six, and neither should leave a hole. */}
+        <dl className="numeric grid grid-cols-2 gap-px border border-[var(--color-ink-hairline)] bg-[var(--color-ink-hairline)] md:grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
+          <Cell label="Guide price" value={priceLabel(property)} accent />
+          {showRooms ? (
+            <>
+              <Cell
+                label={property.category === "Hotel" ? "Keys" : "Bedrooms"}
+                value={bedsLabel(property)}
+              />
+              <Cell label="Bathrooms" value={bathsLabel(property)} />
+            </>
+          ) : null}
+          {property.built > 0 ? <Cell label="Built" value={formatArea(property.built)} /> : null}
+          {property.plot > 0 ? <Cell label="Plot" value={formatArea(property.plot)} /> : null}
+          {property.terrace > 0 ? (
+            <Cell label="Terrace" value={formatArea(property.terrace)} />
+          ) : null}
           <Cell label="Reference" value={property.ref} />
         </dl>
       </section>
 
       {/* Story */}
-      <section className="shell grid gap-12 py-20 md:py-28 lg:grid-cols-12 lg:gap-20">
+      <section className="shell grid gap-12 py-20 md:py-24 lg:grid-cols-12 lg:gap-20">
         <div className="lg:col-span-7">
           {property.story.map((paragraph, i) => (
             <p
               key={i}
-              className={[
-                "reveal leading-relaxed text-mist",
-                i === 0 ? "display text-[clamp(1.5rem,2.6vw,2.25rem)] leading-[1.2] text-bone" : "mt-7 text-base",
-              ].join(" ")}
+              className={
+                i === 0
+                  ? "reveal text-lg leading-relaxed text-bone md:text-xl"
+                  : "reveal mt-6 max-w-[64ch] text-base leading-relaxed text-mist md:text-[1.0625rem]"
+              }
             >
               {paragraph}
             </p>
@@ -105,7 +124,10 @@ export default async function PropertyPage({ params }: Params) {
               </li>
             ))}
             <li className="border-t border-[var(--color-ink-hairline)] py-4 text-sm text-mist">
-              {property.region} · {property.type}
+              {property.kind}
+            </li>
+            <li className="border-t border-[var(--color-ink-hairline)] py-4 text-sm text-mist">
+              {property.region}
             </li>
           </ul>
 
@@ -117,7 +139,8 @@ export default async function PropertyPage({ params }: Params) {
           </PLink>
 
           <p className="mt-6 text-xs leading-relaxed text-mist-dim">
-            Reference {property.ref}. Measurements and price as published by the agency.{" "}
+            Reference {property.ref}. Measurements and price as published by the agency, and
+            subject to change, availability and prior sale.{" "}
             <a
               href={property.sourceUrl}
               rel="noreferrer"
@@ -134,7 +157,7 @@ export default async function PropertyPage({ params }: Params) {
       <Gallery property={property} />
 
       {/* Elsewhere in the portfolio */}
-      <section className="border-t border-[var(--color-ink-hairline)] py-20 md:py-28">
+      <section className="border-t border-[var(--color-ink-hairline)] py-20 md:py-24">
         <div className="shell">
           <h2 className="reveal eyebrow">Elsewhere in the portfolio</h2>
           <div className="mt-12 grid gap-x-8 gap-y-14 md:grid-cols-3">
