@@ -243,10 +243,11 @@ two rejected listings, add them back via `scripts/asset-manifest.json`.
 **Provenance.** All property imagery originates from the client's own
 Resales-Online listing feed (`cdn.resales-online.com`), i.e. the same images the
 agency already publishes on marbellaluxe.es. It is used here for presentation
-purposes in a redesign of the agency's own site. **Ownership has not been
-independently confirmed** — before this site goes live commercially, the agency
-must confirm it holds the rights, or replace the imagery with client-owned
-photography. Treat everything below as **temporary concept imagery**.
+purposes in a redesign of the agency's own site. The project owner has confirmed
+this is being built **for** CENTURY 21 Luxe and that using the agency's own
+listing photography to present it back to them is expected and welcome — see
+*Owner Decisions*. Treat the frames as **concept imagery pending master files**:
+the open question is resolution, not rights.
 
 **Pipeline.** `scripts/asset-manifest.json` holds the CDN key, property UUID,
 version stamp and frame count per listing. `npm run assets` downloads each frame,
@@ -385,25 +386,37 @@ site carries real liability.
 
 ---
 
+## Owner Decisions
+
+Calls made by the project owner. **Treat these as settled — do not re-raise them
+each session, and do not act against them.**
+
+| Date | Decision |
+|---|---|
+| 2026-08-20 | **Deployment is the owner's job.** They handle Vercel themselves. Do not add deploy tooling, CI, or `vercel.json` unless asked. |
+| 2026-08-20 | **The contact form backend is deliberately deferred.** The `mailto:` compose is accepted as sufficient for now. Do not wire a form service unprompted. |
+| 2026-08-20 | **Imagery rights are not a blocker.** The site is being built *for* CENTURY 21 Luxe, and presenting the agency's own listing photography back to them is expected and welcome. The watermark exclusions stand on presentation-quality grounds; the 1200px ceiling stands on resolution grounds. Neither is a rights question. |
+
+---
+
 ## Known Issues
 
 1. **Imagery caps at 1200px wide.** The CDN serves nothing larger; every other
    size key returns a placeholder. Visible as softness in full-bleed desktop
    heroes on a high-DPI display. **Fix: obtain master files from the client.**
-2. **Image rights are unconfirmed.** See Asset Manifest. Must be resolved before
-   any commercial launch.
-3. **Two listings are excluded for watermarks.** See Excluded Listings.
-4. **No team portraits.** Monogram plates stand in. The layout takes real
+2. **Two listings are excluded for watermarks.** See Excluded Listings. Not a
+   rights question — the frames are simply unusable at this scale.
+3. **No team portraits.** Monogram plates stand in. The layout takes real
    headshots without change.
-5. **The enquiry form has no backend.** By design — see Important Design
-   Decisions.
-6. **`scroll-padding-inline` is silently dropped** by the Tailwind v4 / Lightning
+4. **The enquiry form has no backend.** By design, and deliberately deprioritised
+   by the owner — see *Owner Decisions*. Do not "fix" this unprompted.
+5. **`scroll-padding-inline` is silently dropped** by the Tailwind v4 / Lightning
    CSS pipeline; the longhands `scroll-padding-left` / `-right` work. This was the
    cause of the curated rail losing its left inset. **If a shorthand appears not
    to apply, check the computed style before assuming the CSS is wrong.**
-7. **`animation-timeline: view()` is unsupported in Firefox** (without a flag).
+6. **`animation-timeline: view()` is unsupported in Firefox** (without a flag).
    Reveals there simply show content immediately — acceptable, and deliberate.
-8. **`/contact` is server-rendered on demand** rather than static, because it
+7. **`/contact` is server-rendered on demand** rather than static, because it
    reads `searchParams` for the `ref` prefill. Everything else is static.
 
 ## Technical Debt
@@ -426,17 +439,20 @@ Ranked.
 1. **Add `RealEstateListing` JSON-LD** to each property detail page, plus
    `sitemap.ts` and `robots.ts`. Highest SEO return for the least work, and this
    is a business whose leads come from search.
-2. **Request master imagery and unwatermarked frames from the client**, then
-   re-run `npm run assets`. This is the single biggest quality ceiling.
-3. **Wire the enquiry form to a real endpoint** (Formspree, Resend, or a Next.js
-   route handler). Replace `onSubmit` in `components/contact-section.tsx`.
-4. **Integrate the Resales-Online feed** behind `lib/properties.ts` so the
+2. **Request master imagery from the client**, then re-run `npm run assets`. The
+   1200px ceiling is the single biggest remaining quality limit.
+3. **Integrate the Resales-Online feed** behind `lib/properties.ts` so the
    portfolio stays current without a redeploy.
-5. **Add team portraits** when supplied; `components/team-preview.tsx` and
+4. **Add team portraits** when supplied; `components/team-preview.tsx` and
    `app/team/page.tsx` take them in place of the monogram plates.
-6. **Spanish and Dutch routes** — the two largest buyer languages after English.
-7. **Deploy to Vercel** and put the live URL in this file and the README.
-8. **Run a Lighthouse pass** on the deployed build and record the numbers here.
+5. **Spanish and Dutch routes** — the two largest buyer languages after English.
+6. **Run a Lighthouse pass** on the deployed build and record the numbers here.
+7. **Wire the enquiry form to a real endpoint** (Formspree, Resend, or a Next.js
+   route handler) — deprioritised by the owner; only on request. Replace
+   `onSubmit` in `components/contact-section.tsx`.
+
+Deployment is handled by the project owner and is not a task for a Claude
+session. Record the production URL here once it is live.
 
 ---
 
@@ -496,6 +512,8 @@ Not yet deployed. Recommended: **Vercel**.
 - Replaced the IntersectionObserver reveal with a CSS `view()` timeline after the
   audit surfaced hydration mismatches and permanently-invisible filtered cards.
 - Wrote `MASTER_PROMPT.md`, `CLAUDE_CONTEXT.md`, `README.md`.
+- Recorded the owner's calls on deployment, the form backend and image rights in
+  *Owner Decisions*, and re-ranked *Next Recommended Tasks* accordingly.
 
 **Files changed:** initial commit — the entire repository.
 

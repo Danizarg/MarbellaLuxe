@@ -146,10 +146,11 @@ export function ProposalLayer() {
             </ul>
           </div>
 
-          <p className="mt-16 text-xs leading-relaxed text-mist-dim">
-            Property imagery is drawn from your own listing feed and is used here for presentation
-            purposes only. Listings marked with a feed watermark were excluded — see the handover
-            notes for the full asset manifest.
+          <p className="measure mt-16 text-xs leading-relaxed text-mist-dim">
+            Every photograph here is your own, taken from your live listing feed. Two villas were
+            left out because their feed images carry a burned-in watermark, and the feed caps at
+            1,200px wide — master files would lift the full-screen shots noticeably. The complete
+            asset manifest ships with the handover.
           </p>
         </div>
       </div>

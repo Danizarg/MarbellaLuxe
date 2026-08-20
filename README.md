@@ -141,21 +141,26 @@ A new session should be able to start from:
 
 ## Deployment
 
-Not yet deployed. Recommended target is **Vercel**:
+Handled by the project owner, on **Vercel**. Nothing special is required: the
+Next.js preset works as-is, there are no environment variables and no secrets,
+and the imagery ships in the repository so nothing extra runs at build time.
 
-1. Import `Danizarg/MarbellaLuxe` in Vercel.
-2. Framework preset: Next.js. No environment variables are needed — the site has
-   no backend and no secrets.
-3. Deploy. Imagery ships in the repository, so nothing extra runs at build time.
-4. Record the production URL here and in `CLAUDE_CONTEXT.md`.
+Record the production URL here and in `CLAUDE_CONTEXT.md` once it is live.
 
 ---
 
 ## A note on the imagery
 
-Property photographs are drawn from the agency's own Resales-Online listing feed
-and are used here for presentation purposes in a redesign of the agency's own
-site. **Rights have not been independently confirmed** — before any commercial
-launch the agency must confirm it holds them, or supply client-owned photography.
-Listings whose feed images carry a burned-in watermark were excluded rather than
-cropped; see `CLAUDE_CONTEXT.md` → *Asset Manifest*.
+Property photographs are the agency's own, drawn from their Resales-Online
+listing feed, and are downloaded into this repository rather than hotlinked.
+
+Two constraints shaped which frames are used, and neither is about rights:
+
+- **Watermarks.** Some feed images carry a burned-in CDN watermark. Those
+  listings were excluded rather than cropped around — a watermark is not
+  survivable at full-bleed luxury scale.
+- **Resolution.** The feed serves nothing wider than 1200px; every larger size
+  key returns a placeholder. That is the quality ceiling on the desktop heroes,
+  and master files from the agency are the fix.
+
+Full provenance for every image is in `CLAUDE_CONTEXT.md` → *Asset Manifest*.
