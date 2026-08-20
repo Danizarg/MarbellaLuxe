@@ -1,0 +1,31 @@
+{
+  "name": "marbellaluxe",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CENTURY 21 Luxe Marbella — luxury real estate website redesign",
+  "scripts": {
+    "dev": "next dev -p 3210",
+    "build": "next build",
+    "start": "next start -p 3210",
+    "lint": "next lint",
+    "assets": "node scripts/fetch-assets.mjs",
+    "audit": "node scripts/visual-audit.mjs",
+    "contact-sheet": "node scripts/contact-sheet.mjs"
+  },
+  "dependencies": {
+    "motion": "12.23.12",
+    "next": "^16.3.1",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.13",
+    "@types/node": "24.3.0",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "postcss": "8.5.6",
+    "sharp": "^0.35.3",
+    "tailwindcss": "4.1.13",
+    "typescript": "5.9.2"
+  }
+}

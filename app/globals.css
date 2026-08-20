@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   MarbellaLuxe design system
+   --------------------------------------------------------------------------
+   Ground is near-black. Type is a light editorial serif at display sizes and a
+   tight grotesk everywhere else. Gold is a hairline accent, never a fill - it
+   appears on rules, eyebrows and prices and nowhere else. See CLAUDE_CONTEXT.md
+   -> "Design System" for the reasoning behind each decision.
+   ========================================================================== */
+
+@theme {
+  /* Ground */
+  --color-ink: #0a0a0b;
+  --color-ink-raised: #121214;
+  --color-ink-hairline: #1e1e21;
+
+  /* Paper (light sections) */
+  --color-bone: #f2efe9;
+  --color-paper: #fbfaf7;
+
+  /* CENTURY 21 Relentless Gold, plus a lighter reading tone */
+  --color-gold: #beaf87;
+  --color-gold-lift: #d8caa5;
+
+  /* Text on ink */
+  --color-mist: #a4a3a0;
+  --color-mist-dim: #6f6e6c;
+
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* One easing curve for the whole site. Long tail, near-instant attack. */
+  --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  --shell: clamp(1.25rem, 5vw, 5.5rem);
+  --rule: color-mix(in srgb, var(--color-gold) 28%, transparent);
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+body {
+  background: var(--color-ink);
+  color: var(--color-bone);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: #0a0a0b;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* --------------------------------------------------------------- primitives */
+
+.shell {
+  padding-inline: var(--shell);
+  margin-inline: auto;
+  max-width: 96rem;
+}
+
+/* All-caps gold eyebrow. The only place gold appears as text at small size. */
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+/* Display type: light weight, tight leading, optical negative tracking. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.measure {
+  max-width: 46ch;
+  text-wrap: pretty;
+}
+
+.hairline {
+  border-top: 1px solid var(--rule);
+}
+
+/* Numeric data - prices, areas, counts - always tabular so columns align. */
+.numeric {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ------------------------------------------------------------------- motion */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Load-time entrance, for anything above the fold. Stagger with --rise-delay. */
+.rise {
+  animation: rise 0.9s var(--ease-luxe) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+/* Scroll-driven reveal for everything below the fold.
+   Deliberately CSS-only. An IntersectionObserver that toggles a class has to
+   mutate DOM that React owns, which trips hydration warnings and - worse - leaves
+   any element React re-creates (a filtered property card, say) stuck at opacity 0
+   with nothing left observing it. A view() timeline has neither problem, works
+   with JavaScript disabled, and degrades to plain visible content where the
+   timeline is unsupported. */
+.reveal {
+  opacity: 1;
+}
+
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: rise 1s linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 30%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Slow drift applied to full-bleed stills so a static photo still breathes. */
+@keyframes drift {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.14) translate3d(0, -1.2%, 0);
+  }
+}
+
+.drift {
+  animation: drift 24s var(--ease-luxe) infinite alternate;
+}
+
+/* ------------------------------------------------------------ scroll snapping */
+
+.rail {
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  /* Without this the snap point aligns to the scrollport edge and the browser
+     immediately scrolls the container's own left inset out of view. */
+  scroll-padding-left: var(--shell);
+  scroll-padding-right: var(--shell);
+}
+
+.rail::-webkit-scrollbar {
+  display: none;
+}
+
+.rail > * {
+  scroll-snap-align: start;
+}

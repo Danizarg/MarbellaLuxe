@@ -1,0 +1,90 @@
+{
+  "_note": "Source manifest for property imagery. Images are served from the client's own listing feed CDN (Resales-Online). w1200 is the largest real derivative the CDN exposes; every larger key returns a 2.5KB placeholder. Run `npm run assets` to re-download into /public/properties.",
+  "cdnBase": "https://cdn.resales-online.com/public",
+  "maxWidth": 1200,
+  "filenames": [
+    "1-7980e48d732b6fc85c14b43b94d2aa54.jpg",
+    "2-5bd7b9d04b45e33852eaf0ec6670150d.jpg",
+    "3-e898b2bb2a2fdfd06d2c39894dce8316.jpg",
+    "4-c23c0f86247804fa50226aecd8b0b2c8.jpg",
+    "5-3595ad71cbd87be6c3643a4285ef4791.jpg",
+    "6-241328e1bcc9c0d8ce1222beb6c967a8.jpg",
+    "7-aa4cc561180b369757c0bb4af9886cd3.jpg",
+    "8-e64a9055bba3e77ac8aca3b893cdf826.jpg",
+    "9-467d0cee5b725f3ef65f102a0c2e69c0.jpg",
+    "10-bb915d1cb19341576dcdc994b81ab9c5.jpg",
+    "11-20939a0134ad724a8cb2a801094d15a4.jpg",
+    "12-53013098fcab6c38b1379cd33298e050.jpg",
+    "13-5fd73dea700db77384c091ca9818b1a9.jpg",
+    "14-d70dc3102c00d7be0e872dfe1c1f86d7.jpg",
+    "15-11d12f2f454f2f5e9b981fdd8b901d51.jpg",
+    "16-ec67b526875bf0124b6ce4328a754439.jpg",
+    "17-dd5fcd4f0eb487dfa3803f7e20814c0e.jpg",
+    "18-cc72f169493c096e712837ff5d8b6e41.jpg",
+    "19-d0ed7da2012a09046d307c195d98e7d6.jpg",
+    "20-d1f7658cbe4ba6cd8666fec30fba80ad.jpg",
+    "21-2c707e7c511429b4f8ec4ee5f221ddb6.jpg",
+    "22-bcf8e6250e0bab365f900a8ac31ac040.jpg",
+    "23-79897b85162c6a486c7a4d1eb46924dd.jpg",
+    "24-613bbc26f32d7013d348ef202dd30a43.jpg"
+  ],
+  "properties": [
+    {
+      "ref": "R5374861",
+      "key": "wklzjmwuir",
+      "uuid": "e1acbd924a1d11f182490652962539d5",
+      "v": "1778168350",
+      "count": 24
+    },
+    {
+      "ref": "R5439580",
+      "key": "868567beb73b4afc",
+      "uuid": "09189312802c11f182490652962539d5",
+      "v": "1784112979",
+      "count": 14
+    },
+    {
+      "ref": "R5464381",
+      "key": "dmbme36kle",
+      "uuid": "57206b6b9c5411f182490652962539d5",
+      "v": "1787205747",
+      "count": 14
+    },
+    {
+      "ref": "R5463289",
+      "key": "fei838s22c",
+      "uuid": "c2acbbb69b8b11f182490652962539d5",
+      "v": "1787119599",
+      "count": 14
+    },
+    {
+      "ref": "R5460766",
+      "key": "z3bjx7yo8m",
+      "uuid": "5643a808970711f182490652962539d5",
+      "v": "1787083249",
+      "count": 14
+    },
+    {
+      "ref": "R5464375",
+      "key": "geu0qurz3crsy63m",
+      "uuid": "4af5a1d29c5411f182490652962539d5",
+      "v": "1787205727",
+      "count": 14
+    },
+    {
+      "ref": "R5448211",
+      "key": "7b2ad3a8d9",
+      "uuid": "96517c618a7911f182490652962539d5",
+      "v": "1785243381",
+      "count": 14
+    }
+  ],
+  "_excluded": {
+    "reason": "Feed images carry a burned-in CDN watermark (e.g. \"wuap72y7is\", \"or91yu86l1\"). Unusable at luxury presentation scale — excluded from the redesign until the client supplies unwatermarked masters.",
+    "refs": [
+      "R5459710",
+      "R4661893",
+      "R5448664"
+    ]
+  }
+}
