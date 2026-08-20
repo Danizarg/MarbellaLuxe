@@ -84,26 +84,37 @@ with its source in `CLAUDE_CONTEXT.md`.
 
 ---
 
-## The intro
+## The scroll intro
 
-The homepage opens with a 4.6-second cinematic sequence — property plates
-cross-fading behind the wordmark, the markets cycling, then the panel lifting to
-reveal the hero already settled underneath.
+The homepage opens on the brand card. Scroll, and the veil lifts, the wordmark
+leaves, and the composition resolves into the hero — the property was behind it
+the whole time. Nothing plays on a timer; the sequence only advances because you
+advance it.
 
-It plays **once per session**, on the homepage only, is skippable from the first
-frame (click Skip, or press Escape / Enter / Space), and never plays for a visitor
-who has asked for reduced motion. Deep links to a property or a service page never
-sit behind it.
+The header wordmark deliberately stays hidden until the intro wordmark has gone,
+so the two are never on screen together.
 
-To watch it again, open a private window or clear the `mlx-intro-seen` key from
-sessionStorage.
+## Motion
 
-Timings live in `app/globals.css`; the total runtime is mirrored in `RUNTIME_MS`
-in `components/site-intro.tsx` — **change both together**.
+Three sections are pinned and scroll-driven, and no more:
 
-Everything after the intro is deliberately quiet: a conventional property grid, an
-editorial spread for the featured residence, and gentle scroll reveals. No
-scroll-jacking.
+| Section | What scroll drives |
+|---|---|
+| Intro → hero | The veil lifts, the wordmark leaves, the hero resolves |
+| Featured residence | Guide price, then the house growing from the centre of the frame, then 1,303 m² · 8 bedrooms · 3,112 m², each handing over to the photograph that answers it |
+| Architecture → Lifestyle | Five lenses, clip-masked hand-overs, a rule that travels |
+
+Everything between them is a normal page you can read, scan and click. The site
+alternates **impact → information**: the animation is there to make the properties
+feel expensive, never to delay access to them.
+
+Content moves according to what it is — typography rises out of a mask,
+photography opens under a clip and settles from a slight scale, metadata shifts
+gently — and compositions are sequenced by scroll distance, so image, label,
+headline and copy arrive in order however fast you scroll.
+
+Everything respects `prefers-reduced-motion`: each pinned section collapses to a
+static equivalent with the same content.
 
 ## Normal preview mode
 

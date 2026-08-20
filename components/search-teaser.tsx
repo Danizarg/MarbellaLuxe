@@ -5,13 +5,31 @@ import { useState } from "react";
 import { locations } from "@/lib/locations";
 import { categories, formatPrice, properties, type Category } from "@/lib/properties";
 import { useIsProposal } from "./proposal";
+import { SelectField, type Option } from "./select-field";
+import { ResultCount } from "./result-count";
 
 const BUDGETS = [0, 500_000, 1_000_000, 2_000_000, 3_500_000, 5_000_000, 8_000_000];
 
+const typeOptions: Option[] = [
+  { value: "", label: "All types" },
+  ...categories.map((c) => ({ value: c, label: c })),
+];
+
+const regionOptions: Option[] = [
+  { value: "", label: "All markets" },
+  ...locations.map((l) => ({ value: l.region, label: l.region })),
+];
+
+const budgetOptions: Option[] = BUDGETS.map((b) => ({
+  value: String(b),
+  label: b === 0 ? "No minimum" : `From ${formatPrice(b)}`,
+}));
+
 /**
- * A four-control search bar that hands off to /properties with the filters
- * already applied. The live match count updates as you change a control, so you
- * know whether the search is worth running before you run it.
+ * The search bar builds itself as the section arrives — headline, then each
+ * control in turn, then the action. The selectors are the site's own listbox
+ * rather than an operating-system menu; this is the interaction that turns a
+ * visitor into an enquiry and it should not be the one place the design gives up.
  */
 export function SearchTeaser() {
   const router = useRouter();
@@ -39,89 +57,58 @@ export function SearchTeaser() {
   return (
     <section className="border-t border-[var(--color-ink-hairline)] py-24 md:py-32">
       <div className="shell">
-        <div className="reveal flex flex-wrap items-end justify-between gap-8">
+        <div className="flex flex-wrap items-end justify-between gap-8">
           <div className="max-w-2xl">
-            <p className="eyebrow">Search</p>
+            <p className="meta-in seq-1 eyebrow">Search</p>
             <h2 className="display mt-6 text-[clamp(2rem,4.5vw,3.25rem)]">
-              Or start from what you need.
+              <span className="mask">
+                <span className="mask-line seq-2">Or start from what you need.</span>
+              </span>
             </h2>
-            <p className="mt-7 max-w-[62ch] text-base leading-relaxed text-mist">
-              Villas, apartments, penthouses, new developments, building land, commercial premises
-              and hotels — across all five markets. Set the three things that actually narrow a
-              search and we will show you what fits.
-            </p>
           </div>
-          <p className="numeric text-sm text-mist">
-            <span className="text-gold">{String(matches).padStart(2, "0")}</span> of{" "}
-            {String(properties.length).padStart(2, "0")} match
-          </p>
+          <ResultCount
+            count={matches}
+            total={properties.length}
+            className="meta-in seq-2"
+          />
         </div>
 
-        <div className="reveal mt-12 grid gap-px border border-[var(--color-ink-hairline)] bg-[var(--color-ink-hairline)] md:grid-cols-2 lg:grid-cols-4">
-          <Select label="Property type" value={category} onChange={setCategory}>
-            <option value="" className="bg-ink">
-              All types
-            </option>
-            {categories.map((c) => (
-              <option key={c} value={c} className="bg-ink">
-                {c}
-              </option>
-            ))}
-          </Select>
-
-          <Select label="Location" value={region} onChange={setRegion}>
-            <option value="" className="bg-ink">
-              All markets
-            </option>
-            {locations.map((l) => (
-              <option key={l.region} value={l.region} className="bg-ink">
-                {l.region}
-              </option>
-            ))}
-          </Select>
-
-          <Select label="Minimum budget" value={min} onChange={setMin}>
-            {BUDGETS.map((b) => (
-              <option key={b} value={String(b)} className="bg-ink">
-                {b === 0 ? "No minimum" : `From ${formatPrice(b)}`}
-              </option>
-            ))}
-          </Select>
-
-          <button
-            type="button"
-            onClick={go}
-            className="bg-gold px-6 py-6 text-[0.75rem] uppercase tracking-[0.18em] text-ink transition-colors duration-500 hover:bg-gold-lift"
-          >
-            Show properties
-          </button>
+        <div className="mt-12 border-y border-[var(--color-ink-hairline)]">
+          <div className="grid divide-y divide-[var(--color-ink-hairline)] md:grid-cols-2 md:divide-y-0 lg:grid-cols-4 lg:divide-x lg:divide-[var(--color-ink-hairline)]">
+            <div className="meta-in seq-1 px-0 py-6 lg:px-7">
+              <SelectField
+                label="Type"
+                value={category}
+                options={typeOptions}
+                onChange={setCategory}
+              />
+            </div>
+            <div className="meta-in seq-2 px-0 py-6 lg:px-7">
+              <SelectField
+                label="Location"
+                value={region}
+                options={regionOptions}
+                onChange={setRegion}
+              />
+            </div>
+            <div className="meta-in seq-3 px-0 py-6 lg:px-7">
+              <SelectField label="Budget" value={min} options={budgetOptions} onChange={setMin} />
+            </div>
+            <button
+              type="button"
+              onClick={go}
+              className="meta-in seq-4 group flex items-center justify-between gap-4 px-0 py-6 text-left text-[0.75rem] uppercase tracking-[0.18em] text-bone transition-colors duration-500 hover:text-gold lg:px-7"
+            >
+              Show properties
+              <span
+                aria-hidden
+                className="h-px w-8 bg-gold transition-all duration-500 group-hover:w-12"
+                style={{ transitionTimingFunction: "var(--ease-luxe)" }}
+              />
+            </button>
+          </div>
         </div>
       </div>
     </section>
-  );
-}
-
-function Select({
-  label,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="bg-ink px-6 py-5">
-      <span className="text-[0.65rem] uppercase tracking-[0.2em] text-mist-dim">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full appearance-none bg-transparent text-base text-bone focus:outline-none"
-      >
-        {children}
-      </select>
-    </label>
   );
 }

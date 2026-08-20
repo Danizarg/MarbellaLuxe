@@ -157,71 +157,141 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .rise,
-  .reveal {
-    animation: none;
+/* ------------------------------------------------------- motion vocabulary
+
+   Different kinds of content move in different ways, and the difference is what
+   stops the page reading as "everything fades up thirty pixels".
+
+     typography      → mask reveal (lines rise out of an overflow clip)
+     photography     → clip reveal + settle from a slight scale
+     metadata        → small opacity + translate
+     section change  → crossfade with depth (handled per component)
+     active state    → a rule that travels (handled per component)
+
+   All four are scroll-driven `view()` timelines, so they cost no JavaScript and
+   degrade to plain visible content where the timeline is unsupported.
+   -------------------------------------------------------------------------- */
+
+/* Typography — put `.mask` on a wrapper, `.mask-line` on the line inside. */
+.mask {
+  overflow: hidden;
+  display: block;
+}
+
+.mask-line {
+  display: block;
+}
+
+@keyframes mask-rise {
+  from {
+    transform: translateY(105%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Photography — the frame opens from the bottom edge while the image settles. */
+@keyframes clip-open {
+  from {
+    clip-path: inset(0 0 100% 0);
+    transform: scale(1.08);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+/* Reversed, for alternating editorial rows. */
+@keyframes clip-open-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: scale(1.08);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+  }
+}
+
+@keyframes meta-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6rem);
+  }
+  to {
     opacity: 1;
     transform: none;
   }
 }
 
-/* ---------------------------------------------------------------- the intro
-
-   A single cinematic opener, played once per session, in front of the site
-   rather than as part of it. Everything below the intro is presented normally -
-   the animation is spent here so the property pages can stay calm.
-
-   The `data-intro="seen"` attribute is set by a blocking inline script in the
-   document head before first paint, so a returning visitor never sees a flash of
-   the intro before JavaScript hides it.
-   -------------------------------------------------------------------------- */
-
-.site-intro {
-  position: fixed;
-  inset: 0;
-  z-index: 200;
-  overflow: hidden;
-  background: var(--color-ink);
-  animation: intro-lift 1s var(--ease-luxe) 3.6s both;
+.mask-line,
+.clip-reveal,
+.clip-reveal-up,
+.meta-in {
+  opacity: 1;
 }
 
-html[data-intro="seen"] .site-intro,
-html[data-intro="skip"] .site-intro {
-  display: none;
-}
+@supports (animation-timeline: view()) {
+  .mask-line {
+    animation: mask-rise 1s linear both;
+  }
+  .clip-reveal {
+    animation: clip-open 1s linear both;
+  }
+  .clip-reveal-up {
+    animation: clip-open-up 1s linear both;
+  }
+  .meta-in {
+    animation: meta-in 1s linear both;
+  }
 
-@keyframes intro-lift {
-  to {
-    transform: translateY(-101%);
+  .mask-line,
+  .clip-reveal,
+  .clip-reveal-up,
+  .meta-in {
+    animation-timeline: view();
+    animation-range: entry 6% cover 26%;
+  }
+
+  /* Authored sequencing inside one composition: image, then label, then
+     headline, then supporting copy. The offset is scroll distance, not time, so
+     the order holds however fast the visitor scrolls. */
+  .seq-1 {
+    animation-range: entry 6% cover 24%;
+  }
+  .seq-2 {
+    animation-range: entry 12% cover 30%;
+  }
+  .seq-3 {
+    animation-range: entry 17% cover 35%;
+  }
+  .seq-4 {
+    animation-range: entry 22% cover 40%;
   }
 }
 
-/* Each plate fades up, holds, and hands over to the next. */
-@keyframes intro-plate {
-  0% {
-    opacity: 0;
-    transform: scale(1.16);
-  }
-  22%,
-  62% {
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .reveal,
+  .mask-line,
+  .clip-reveal,
+  .clip-reveal-up,
+  .meta-in {
+    animation: none;
     opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
+    transform: none;
+    clip-path: none;
   }
 }
 
-.intro-plate {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  animation: intro-plate 2.2s var(--ease-luxe) both;
-}
-
-/* The gold rule draws out from the centre. */
-@keyframes intro-rule {
+/* The intro brand card arrives on load and leaves on scroll. Its entrance has to
+   be time-based — at zero scroll there is no progress to drive it, and a visitor
+   who never scrolls should still be met by the wordmark. */
+@keyframes brand-rule {
   from {
     transform: scaleX(0);
   }
@@ -230,32 +300,46 @@ html[data-intro="skip"] .site-intro {
   }
 }
 
-.intro-rule {
-  transform: scaleX(0);
-  transform-origin: center;
-  animation: intro-rule 1.2s var(--ease-luxe) 0.15s both;
+.brand-rule {
+  animation: brand-rule 1.1s var(--ease-luxe) 0.15s both;
 }
 
-/* The wordmark tracks in rather than fading in. */
-@keyframes intro-track {
+@keyframes brand-track {
   from {
     opacity: 0;
     letter-spacing: 0.75em;
+    text-indent: 0.75em;
   }
   to {
     opacity: 1;
     letter-spacing: 0.3em;
+    text-indent: 0.3em;
   }
 }
 
-.intro-track {
-  animation: intro-track 1.4s var(--ease-luxe) 0.4s both;
+.brand-track {
+  animation: brand-track 1.3s var(--ease-luxe) 0.35s both;
 }
 
-@keyframes intro-fade-up {
+/* Location explorer copy swap. Keyed on the active market, so React remounts the
+   node and the animation replays — a state change, not a scroll reveal. */
+@keyframes loc-swap {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.loc-swap {
+  animation: loc-swap 0.75s var(--ease-luxe) both;
+}
+
+@keyframes loc-fade {
   from {
     opacity: 0;
-    transform: translateY(0.9rem);
+    transform: translateY(0.5rem);
   }
   to {
     opacity: 1;
@@ -263,31 +347,34 @@ html[data-intro="skip"] .site-intro {
   }
 }
 
-.intro-fade {
-  animation: intro-fade-up 1.1s var(--ease-luxe) both;
-  animation-delay: var(--intro-delay, 0ms);
+.loc-fade {
+  animation: loc-fade 0.75s var(--ease-luxe) 0.08s both;
 }
 
-/* Market names cycle through one slot. */
-@keyframes intro-market {
-  0%,
-  100% {
-    opacity: 0;
-    transform: translateY(0.4rem);
-  }
-  18%,
-  70% {
-    opacity: 1;
-    transform: none;
-  }
+/* The header wordmark holds back until the intro wordmark has left, so the two
+   are never on screen at once. Set by components/intro-hero.tsx. */
+.site-header {
+  transition: opacity 0.7s var(--ease-luxe);
 }
 
-.intro-market {
-  position: absolute;
-  inset: 0;
+html[data-brand="intro"] .site-header {
   opacity: 0;
-  animation: intro-market 1.1s var(--ease-luxe) both;
-  animation-delay: var(--intro-delay, 0ms);
+  pointer-events: none;
+}
+
+/* Scroll cue: a fill that runs down the rule and resets. */
+@keyframes cue-run {
+  0% {
+    transform: translateY(-100%);
+  }
+  60%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.cue-run {
+  animation: cue-run 2.4s var(--ease-luxe) infinite;
 }
 
 /* Slow drift applied to full-bleed stills so a static photo still breathes. */

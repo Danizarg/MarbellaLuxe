@@ -23,8 +23,12 @@ Before making any changes:
 
 A complete, original redesign of the CENTURY 21 Luxe Marbella website — a luxury
 real-estate agency covering Marbella, Benahavís, Estepona, Sotogrande and Mijas.
-The governing idea is that **the property is the product**. The animation budget
-is spent on a single cinematic intro; everything after it is presented normally.
+The governing idea is that **the property is the product**, and that **scroll
+should reveal information rather than just move the page**. Three moments are
+pinned and scroll-driven — the intro resolving into the hero, the featured
+residence told through its own numbers, and the Architecture → Lifestyle sequence
+— and everything between them is a normal page you can read and click.
+
 Full specification in `MASTER_PROMPT.md`.
 
 ---
@@ -112,9 +116,10 @@ No animation library. No UI kit. No CSS-in-JS.
 
 ```
 app/
-  globals.css              design system: tokens, primitives, intro, motion
-  layout.tsx               fonts, metadata, intro head script, header/footer
-  page.tsx                 homepage: intro + section order
+  globals.css              design system: tokens, primitives, motion vocabulary
+  layout.tsx               fonts, metadata, header/footer
+  icon.svg                 site icon
+  page.tsx                 homepage: section order + the impact/information rhythm
   not-found.tsx
   properties/page.tsx      search page shell
   properties/[slug]/       property detail experience (SSG, 24 routes)
@@ -123,18 +128,21 @@ app/
   services/[slug]/         service detail (SSG, 5 routes)
   about/ careers/ sell/ investment/ team/ contact/
 components/
-  site-intro.tsx           the cinematic opener + its no-flash head script
-  site-header.tsx          contracting, blur-on-scroll header + mobile sheet
-  site-footer.tsx          full site map, three link groups
-  hero.tsx                 cinematic hero
-  curated.tsx              featured properties grid
-  property-card.tsx        shared card, adapts to category
-  flagship-story.tsx       featured residence editorial spread
+  intro-hero.tsx           PINNED. scroll intro resolving into the hero
+  flagship-reveal.tsx      PINNED. the residence told through its own numbers
+  feature-explorer.tsx     PINNED. Architecture → Interiors → Views → Location → Lifestyle
+  flagship-story.tsx       editorial spread + the typographic Interlude (light)
+  photo-band.tsx           bright full-bleed contrast reset
+  curated.tsx              featured properties, editorial grid
+  property-card.tsx        shared card — photo-dominant, variable aspect
+  select-field.tsx         the site's own listbox (replaces native select)
+  result-count.tsx         "24 residences", crossfading on change
   location-explorer.tsx    the five markets
-  feature-explorer.tsx     Architecture/Interiors/Views/Location/Lifestyle
-  search-teaser.tsx        homepage 4-control search
+  search-teaser.tsx        homepage configurator
   property-search.tsx      full filter + sort + results
   gallery.tsx              editorial grid + keyboard lightbox
+  site-header.tsx          contracting header; hides while data-brand="intro"
+  site-footer.tsx          full site map, three link groups
   seller.tsx investment.tsx team-preview.tsx contact-section.tsx
   section-head.tsx         shared section opening (accepts multiple paragraphs)
   proposal.tsx             useIsProposal + PLink
@@ -146,6 +154,8 @@ lib/
   team.ts                  the team
   locations.ts             five markets + feature facets
   services.ts              five service pages
+  grid-rhythm.ts           editorial grid spans and aspects
+  use-scroll-progress.ts   the pinned-section primitive (+ span, mix)
 scripts/
   asset-manifest.json      image provenance
   fetch-assets.mjs         downloads + converts imagery  (npm run assets)
@@ -161,12 +171,16 @@ public/properties/<REF>/NN.webp
 ### Complete
 
 - Repository, context system, README
-- Design system (tokens, type scale, motion, intro, primitives)
+- Design system (tokens, type scale, motion vocabulary, primitives)
 - Asset pipeline: 24 properties, 244 images, downloaded and converted to WebP
-- Cinematic intro sequence, once per session, homepage only
-- Homepage: hero, featured grid, featured residence, locations, facets, search,
-  seller, investment, team, contact
-- Property search with type / market / budget / bedroom filters and sorting
+- Scroll intro resolving into the hero, with a clean wordmark handover
+- Flagship reveal — the residence told through price, built area, bedrooms, plot
+- Pinned Architecture → Lifestyle sequence with a travelling active rule
+- Typographic interlude and bright photographic band as contrast resets
+- Editorial property grid (variable spans and aspects) on homepage and search
+- Custom listbox replacing native selects, with full keyboard support
+- Property search with type / market / budget / bedroom filters, curated default
+  sort, and a grid that transitions rather than snapping
 - Property detail experience (24 static routes) with gallery + lightbox
 - Rentals schedule (8 listings, desktop table + mobile cards)
 - Services index and five service pages (SSG)
@@ -340,33 +354,52 @@ rings, and exactly one filled primary action. It is never a background wash.
   in the spec grids.
 - Every size is a `clamp()`. There are no breakpoint-snapped font sizes.
 - Body copy is capped at `max-w-[62ch]` (`[64ch]` on long-form pages).
-
 ### Motion Architecture
 
-| Class | Trigger | Use |
+The site has three pinned, scroll-driven moments and a shared vocabulary for
+everything else. `lib/use-scroll-progress.ts` provides the primitive: one
+rAF-throttled passive listener per pinned section, returning 0 → 1 across its
+travel, plus `span()` and `mix()` for windowing and interpolation.
+
+**The three pinned moments** — do not add a fourth.
+
+| Component | Height | What scroll drives |
 |---|---|---|
-| `.site-intro` + `intro-*` | CSS animation on load | The intro sequence only |
-| `.rise` | CSS animation on load, staggered with `--rise-delay` | Above the fold |
-| `.reveal` | `animation-timeline: view()` | Below the fold |
-| `.drift` | 24s infinite alternate scale | Full-bleed stills |
+| `intro-hero.tsx` | 240svh | Veil lifts, wordmark leaves, hero resolves |
+| `flagship-reveal.tsx` | 420svh | Price → frame grows from centre → each specification hands over to the photograph that answers it |
+| `feature-explorer.tsx` | 500svh | Architecture → Interiors → Views → Location → Lifestyle |
 
-Cross-fades (location explorer, feature explorer) are opacity transitions driven
-by React state, ~1s on `--ease-luxe`. `prefers-reduced-motion: reduce` disables
-all of it, including the intro.
+Each collapses to a static equivalent under reduced motion. `flagship-reveal.tsx`
+and `feature-explorer.tsx` render a full static fallback; `intro-hero.tsx` forces
+progress to 1 and drops to `100svh`.
 
-**Intro timings** live entirely in `globals.css` so the sequence can be re-tuned
-without touching the component: plates 2.2s each staggered 1.1s, rule 1.2s from
-0.15s, wordmark tracking-in 1.4s from 0.4s, markets cycling from 1.7s, panel lift
-1s from 3.6s. Total runtime 4.6s, mirrored in `RUNTIME_MS` in
-`components/site-intro.tsx` — **change both together.**
+**The vocabulary**, all `view()` timelines in `globals.css`, so they cost no
+JavaScript and degrade to plain visible content where unsupported:
 
-**Why `.reveal` is CSS-only.** The first implementation used an
-IntersectionObserver that added an `is-in` class. That mutates DOM React owns: it
-produced hydration mismatches, and any element React re-created (a property card
-after a filter change) came back at `opacity: 0` with nothing left observing it,
-i.e. permanently invisible. A `view()` timeline has neither problem, works with
-JavaScript disabled, and degrades to plain visible content where unsupported.
-**Do not reintroduce the observer.**
+| Class | Content | Movement |
+|---|---|---|
+| `.mask` + `.mask-line` | Typography | Lines rise out of an overflow clip |
+| `.clip-reveal` / `.clip-reveal-up` | Photography | Frame opens, image settles from scale 1.08 |
+| `.meta-in` | Labels, metadata | Small opacity and translate |
+| `.reveal` | Generic blocks | Rise |
+| `.rise` | Above the fold | Load-time entrance, `--rise-delay` |
+| `.drift` | Full-bleed stills | 24s scale, infinite alternate |
+
+`.seq-1` … `.seq-4` offset the `animation-range` so a composition arrives in
+order — image, label, headline, copy — sequenced by **scroll distance**, not
+time, so the order holds however fast the visitor scrolls.
+
+**The wordmark handover.** `intro-hero.tsx` sets `data-brand` on `<html>`;
+`globals.css` fades the header out while it reads `"intro"`. The switch happens
+strictly *after* the intro brand card has reached zero opacity
+(`p > BRAND_OUT[1] + 0.04`), because an earlier threshold left a scroll window in
+which both wordmarks were legible — which is exactly the stacking-bug impression
+the design must avoid. **If you retime the brand card, retime this too, and
+re-check frame-by-frame at 390px and 1512px.**
+
+The brand card's *entrance* is time-based CSS (`.brand-rule`, `.brand-track`,
+`.rise`) rather than scroll-driven: at zero scroll there is no progress to drive
+it, and a visitor who never scrolls must still be met by the wordmark.
 
 ### Responsive Decisions
 
@@ -383,22 +416,59 @@ JavaScript disabled, and degrades to plain visible content where unsupported.
 
 ## Important Design Decisions
 
-**The animation lives in the intro; the site is calm.** A 4.6s cinematic opener
-plays once per session on the homepage, then lifts to reveal the hero already
-settled. *Why:* it gives the brand a moment of theatre without making the
-listings — the thing people came for — harder to read.
+**The intro is scroll-driven, not timed.** The visitor lands on the brand card
+and scrolls; the veil lifts, the wordmark leaves, the hero resolves. *Why:* a
+timed splash is something you sit through; a scroll intro is something you
+perform, and it belongs to the site rather than sitting in front of it. It also
+means the visitor is already scrolling by the time the hero arrives.
 
-**Properties are shown normally.** The featured grid is a conventional
-three-column grid, and the flagship is an editorial spread with large photography
-and real paragraphs. An earlier build used a scroll-snapped rail and a sticky
-scroll-hijacked narrative; both were replaced. *Why:* a rail makes comparison
-harder, and scroll-jacking made the most expensive property on the site harder to
-read than the cheapest.
+**The wordmark has exactly one lifecycle.** The header hides while
+`data-brand="intro"` and only appears once the intro card has reached zero. *Why:*
+two `Luxe` marks on screen at once reads as a stacking bug, not as branding. The
+first fix left a narrow scroll window where both were faintly legible — it took a
+frame-by-frame capture at two widths to see it. **Re-check that way after any
+retiming.**
 
-**The writing is full-length.** Property descriptions run to three or four
-substantial paragraphs; section copy carries two. *Why:* an earlier draft used a
-clipped, aphoristic register that read as styling rather than as information.
-Buyers spending millions want information.
+**Three pinned moments, deliberately no more.** Intro/hero, flagship reveal,
+feature explorer. *Why:* the page has to alternate impact and information. A
+fourth pinned section would turn a property site into a showreel, and a buyer
+still has to be able to find a price.
+
+**The flagship reveal is built from real data.** Guide price, then 1,303 m², then
+8 bedrooms, then 3,112 m² — each handing over to the photograph that answers it.
+*Why:* the specification *is* the animation. That is worth far more than
+decorative motion, and it cannot be accused of being style over substance.
+
+**The homepage seduces; the property pages explain.** Homepage chapters are a
+label, a headline-sized statement and one or two supporting sentences. The full
+four-paragraph account lives on the property page. *Why:* a hundred-word block
+beside a photograph reads as an architectural brochure. Nothing was deleted — it
+moved to where someone who has decided to care will actually read it.
+
+**Property cards are roughly 70% image.** Location and type, name, price, four
+numbers. No description sentence. *Why:* on an index the photograph sells the
+property; the sentence is dead weight and pushes the image down to half the card.
+
+**The grid has an editorial rhythm.** A wide feature, a portrait, three level
+frames, a portrait, a second wide — repeating every seven cards, and *only above
+`xl`*. *Why:* identical tiles read as a portal. Below `xl` every card is 4:3,
+because a landscape photograph cropped to portrait at full phone width shows
+mostly ceiling.
+
+**The default sort is "Featured".** The flagship first, then price descending.
+*Why:* strict price order opened the portfolio with a 54-key hotel's guest-room
+photograph, because it is €100k more expensive than the villa. One position, and
+the page leads with its best image. It is labelled, so it is not a lie.
+
+**Selects are the site's own listbox.** *Why:* a native `<select>` renders an
+operating-system menu — grey, 13px, outside the design — on the single
+interaction that turns a visitor into an enquiry. Full keyboard support
+(Enter/Space/↓ to open, arrows, Home/End, Escape) is the part that usually gets
+skipped, and it is implemented.
+
+**"24 residences", not "24 of 24 match".** The count crossfades between two true
+values when filters change. *Why:* a counting animation would tick through
+numbers that were never the answer.
 
 **The hero is a property, not a slogan.** The site opens on the €9.9M Guadalmina
 Baja residence with its specification laid underneath as data.
@@ -450,8 +520,11 @@ each session, and do not act against them.**
 | 2026-08-20 | **The contact form backend is deliberately deferred.** The `mailto:` compose is accepted as sufficient for now. Do not wire a form service unprompted. |
 | 2026-08-20 | **Imagery rights are not a blocker.** The site is being built *for* CENTURY 21 Luxe, and presenting the agency's own listing photography back to them is expected and welcome. |
 | 2026-08-20 | **Cover the whole business.** Every property type and every service, not villa sales alone. |
-| 2026-08-20 | **Animate the intro, not the site.** Properties are to be shown normally. |
-| 2026-08-20 | **Write normally.** Full paragraphs, not clipped one-liners. |
+| 2026-08-20 | **The intro is a scroll intro, not a video.** It happens on load *and scroll*. Superseded the earlier timed overlay. |
+| 2026-08-20 | **Do not touch the opening.** The hero is the strongest part of the design. Bring later sections up to it; never drag it down to meet them. |
+| 2026-08-20 | **The hero headline runs wide** — two lines, not three. |
+| 2026-08-20 | **Homepage copy is short; detail pages are full.** Reduce visible homepage copy by roughly a quarter to a third. |
+| 2026-08-20 | **The properties page must not read as a portal.** Editorial grid, photo-dominant cards, configurator filter bar. |
 
 ---
 
@@ -480,6 +553,15 @@ each session, and do not act against them.**
 9. **A `caret-color: transparent` hydration warning** appears in dev on pages
    with form inputs. It is injected by Chrome's autofill, not by this codebase —
    `grep -r caret app components lib` returns nothing. Ignore it.
+10. **The homepage is 25 screens tall** (≈21,600px at 1512×850). Three pinned
+    sections account for about half of it. That is intentional, but it means the
+    homepage is a *sequence*, not a page — audit it as a scroll run, and never
+    judge a pinned section from one screenshot.
+11. **Always look at an image before assigning it to a facet or a card.** The
+    Lifestyle facet originally pointed at `R5463289/04`, which is an interior —
+    duplicating the Interiors facet and contradicting its own headline ("Three
+    hundred days of outdoors"). Frame indices are not self-describing. Use
+    `npm run contact-sheet -- <REF>`.
 
 ## Technical Debt
 
@@ -548,40 +630,59 @@ and in `README.md` once live.
 
 ## Last Session Summary
 
-**Date:** 2026-08-20 (second working session, same day)
+**Date:** 2026-08-20 (third working session, same day)
+
+Driven by a full video review of the deployed site. The headline finding was that
+the opening was the strongest part and the rest did not hold that level.
 
 **Work completed**
 
-- Expanded the portfolio from 7 villas to **24 listings across seven categories**
-  — villas, apartments, penthouses, new developments, plots, commercial and
-  hotels — plus **8 long-term rentals**. Scraped every figure from the client's
-  own listing pages and reviewed all imagery as contact sheets before selecting.
-- Rejected three further listings for watermarks and two for bad category data at
-  source; discovered that the entire rental inventory is watermarked and designed
-  the rentals section around that rather than shipping watermarked photography.
-- Added **Mijas** as a fifth market, since the client genuinely trades there.
-- Built the **cinematic intro**: three plates cross-fading behind the wordmark,
-  markets cycling, panel lifting to reveal the hero. Once per session, homepage
-  only, skippable, disabled under reduced motion, with a blocking head script so
-  returning visitors never see a frame of it.
-- **Removed the scroll-jacking**: the curated rail became a conventional grid and
-  the sticky flagship narrative became an editorial spread.
-- **Rewrote every piece of copy at full length** — property stories now run three
-  to four paragraphs, section copy two.
-- Added new routes: `/rentals`, `/services`, `/services/[slug]` (×5), `/about`,
-  `/careers`. Rebuilt the footer as a full site map.
-- Added a property-type filter to search; made the spec strip auto-fit so a plot
-  no longer leaves an empty cell; gave rentals a stacked mobile layout.
-- Ran the visual audit at 1512px and 390px across 32 routes and fixed what it
-  found.
+- **Replaced the timed intro overlay with a scroll intro.** `intro-hero.tsx`
+  merges intro and hero into one pinned composition: land on the brand card,
+  scroll, the veil lifts and the hero resolves. The brand entrance is time-based
+  CSS (there is no progress to drive it at zero scroll); the exit is scroll-driven.
+- **Fixed the wordmark handover properly.** The header hides behind
+  `data-brand="intro"` and appears strictly after the intro card reaches zero.
+  Verified frame-by-frame at 390px and 1512px — the first attempt still left a
+  narrow window with two faint marks.
+- **Widened the hero headline** to two lines from three.
+- **Built the flagship reveal** — the signature moment. Guide price on black, the
+  house emerging from the centre of the frame and growing to fill it, then
+  1,303 m², 8 bedrooms, 3,112 m², each handing over to the photograph that
+  answers it. Every figure is the client's own.
+- **Removed the remaining scroll-jacking from the editorial spread** and rewrote
+  its chapters as label + statement + one or two sentences.
+- **Pinned the Architecture to Lifestyle sequence** with clip-mask image
+  hand-overs, a masked headline swap, and a rule that travels with scroll. Tabs
+  still work — they scroll to their own segment.
+- **Built a motion vocabulary** (`.mask` / `.clip-reveal` / `.meta-in` / `.seq-*`)
+  so typography, photography and metadata each move differently, sequenced by
+  scroll distance rather than by time.
+- **Added two contrast resets**: a light typographic interlude built on 1,303 m²,
+  and a bright full-bleed photographic band in the long dark lower stretch.
+- **Rebuilt the properties page**: editorial grid rhythm, photo-dominant cards
+  with no description sentence, custom listbox filter bar, "24 residences" with a
+  crossfading count, and a grid that transitions rather than snapping.
+- **Cut homepage copy** by roughly a third; location and facet copy reduced to one
+  paragraph each.
+- Added `app/icon.svg`; corrected "four markets" to five on the properties page.
 
-**Files changed:** most of `lib/`, most of `components/`, several new routes, the
-asset manifest and pipeline, and all three documentation files.
+**Faults the audit caught and fixed**
 
-**Build status:** `npm run build` passing. **41 routes**, all statically
-prerendered except `/contact`. No TypeScript errors.
+- Brand card invisible at zero scroll — its entrance was scroll-driven.
+- Empty grey frame before the flagship reveal's first image.
+- Facet headline sitting half-clipped under its mask through the hand-over.
+- **Lifestyle facet pointing at an interior photograph** — duplicating Interiors
+  and contradicting its own headline. Now the Atalaya penthouse terrace.
+- Six-row filter bar swallowing half the viewport on a phone.
+- Portrait card crops showing mostly ceiling at full phone width.
+- A 54-key hotel's guest room leading the portfolio ahead of the flagship.
 
-**Development stopped at:** a complete, building, audited site covering the
-agency's whole business.
+**Build status:** `npm run build` passing. 41 routes, all static except
+`/contact`. No TypeScript errors, no console errors, no failing requests across a
+full homepage scroll.
+
+**Development stopped at:** a complete, audited site whose motion carries all the
+way from the intro to the footer.
 
 **Next recommended action:** task 1 above — JSON-LD, sitemap and robots.

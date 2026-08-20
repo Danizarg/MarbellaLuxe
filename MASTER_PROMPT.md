@@ -80,38 +80,92 @@ Where the live site spreads one subject across several near-identical pages (fiv
 
 ---
 
-## 3a. Where the animation goes
+## 3a. Motion
 
-**The intro is animated. The site is not.**
+**Scroll should reveal information, not just move the page.**
 
-- The **intro** is a full cinematic opener — plates cross-fading behind the
-  wordmark, the markets cycling, and the panel lifting to reveal the hero. Spend
-  the animation budget here.
-- **Everything after it is presented normally.** Properties appear in a
-  conventional grid. The featured residence is a magazine spread, not a
-  scroll-hijacked stage. Sections reveal gently on scroll and otherwise stay
-  still.
-- The intro plays **once per session**, on the homepage only. Deep links to a
-  property or a service never sit behind an animation. It is skippable from the
-  first frame and never plays for a visitor who has asked for reduced motion.
+The intro is a **scroll intro, not a video**. The visitor lands on the brand card
+and scrolls; the veil lifts, the wordmark leaves, and the composition resolves
+into the hero. Nothing plays on a timer — the sequence advances only because the
+visitor advances it.
 
-Scroll-jacking, pinned stages and multi-screen scroll narratives are explicitly
-out of scope for the property pages. They demo well and they make the most
-expensive property on the site harder to read than the cheapest.
+### The wordmark has one lifecycle
+
+Appear → establish the brand → leave → the header wordmark takes over. There must
+never be a frame in which two "Luxe" marks are legible at once. Verify this
+frame-by-frame at more than one viewport width; checking that it looks right at
+rest is not enough.
+
+### Three pinned moments, and no more
+
+The page alternates **impact → information → impact → information**. Exactly three
+sections are pinned and scroll-driven: the intro/hero, the featured residence told
+through its own numbers, and the Architecture → Lifestyle sequence. Everything
+between them is a normal page that can be read, scanned and clicked.
+
+Do not pin a fourth. This sells real estate: animation exists to make the
+properties feel expensive, never to delay access to them.
+
+### A motion vocabulary, not one effect
+
+Different content moves differently, or the page reads as "everything fades up
+thirty pixels":
+
+| Content | Movement |
+|---|---|
+| Typography | mask reveal — lines rise out of an overflow clip |
+| Photography | clip reveal, settling from a slight scale |
+| Metadata | small opacity and translate |
+| Section change | crossfade with depth |
+| Active state | a rule that travels |
+
+Compositions are **sequenced** — image, then label, then headline, then supporting
+copy — offset by scroll distance so the order holds however fast the visitor
+scrolls. Alternating editorial rows reverse the reveal direction.
+
+### Contrast
+
+The dark identity stays, but a long uniformly dark run flattens the hierarchy
+however good the type is. Break it: dark section → bright architectural
+photograph → warm-white editorial section → dark cinematic section. The eye needs
+resets.
+
+### Surprises
+
+Two or three moments must break the established grammar, or the visitor learns
+the pattern and stops discovering. A contained image that expands to fill the
+viewport; a full-viewport typographic statement; a pinned interactive sequence.
+Two or three. Not four.
 
 ## 3b. Writing
 
-**Write normally.** Full sentences, real paragraphs, the register of a good estate
-agency that respects its reader.
+**Seduce first, explain second — and put the explanation where it belongs.**
 
-- Property descriptions run to three or four substantial paragraphs, not three
-  clipped lines. Say what the house is, how it is arranged, what the plot does,
-  and what the area actually offers.
-- Section copy carries two paragraphs where one would leave the reader short.
-- Avoid the aphoristic, clipped, one-clause-per-line style. It reads as styling
-  rather than as information, and buyers spending millions want information.
-- Never pad. Fuller does not mean vaguer — every added sentence should carry a
-  fact, a number or a genuine judgement.
+On the **homepage**, the hierarchy is: a small label, then a headline-sized
+statement, then one or two concise supporting sentences. Extract the strongest
+idea from a paragraph and make *that* the visual content. A hundred-word block
+beside a photograph turns a website into an architectural brochure.
+
+On **property and service pages**, write properly: full sentences, real
+paragraphs, the register of a good agency that respects its reader. Say what the
+house is, how it is arranged, what the plot does, what the area offers. This is
+where a reader who has decided to care actually reads.
+
+Never pad, and never delete substance. Fuller does not mean vaguer; shorter does
+not mean thinner. Every sentence carries a fact, a number or a judgement.
+
+### Typography discipline
+
+The serif is a signature. Use it for the hero, major statements, section
+headlines and flagship figures. **Never** for navigation, labels, metadata,
+buttons or filters — the serif/sans contrast is what makes both work.
+
+### Property cards
+
+On an index, the photograph sells the property and the paragraph is dead weight.
+A card carries location and type, the name, the price, and the four numbers —
+nothing more. Aim for roughly 70% image to 30% information. The description lives
+on the property's own page.
 
 ## 3. Art direction rules
 
@@ -191,6 +245,27 @@ The build is not finished when it compiles. Screenshot every section at desktop
 and mobile widths, look at the images, and fix what is wrong — contrast,
 collisions, clipped insets, repeated photography. `npm run audit` exists for
 this. Re-audit after fixing.
+
+**Scroll-driven sections must be audited as a sequence, not as a single frame.**
+Capture a run of stops through each pinned section and look at the hand-overs.
+Most of the faults live in the transitions: a wordmark that lingers into the
+next state, a headline sitting half-clipped under its mask, an empty frame before
+the first image arrives.
+
+### The quality test
+
+Watch a complete desktop scroll, top to bottom, and ask:
+
+- First ten seconds — does this immediately look expensive?
+- Ten to thirty — is it still surprising me?
+- Middle — am I discovering properties, or reading paragraphs?
+- Search — does it still feel premium?
+- Properties page — does this look like the same brand as the hero?
+- End — would I remember this site in five minutes?
+
+**If the quality drops after the hero, the job is not finished.** The opening is
+the strongest part of this design; the work is bringing everything after it up to
+that level, never dragging the opening down to meet the rest.
 
 ---
 

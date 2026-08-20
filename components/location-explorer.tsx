@@ -4,32 +4,37 @@ import Image from "next/image";
 import { useState } from "react";
 import { countIn, locations } from "@/lib/locations";
 import { imageSrc } from "@/lib/properties";
-import { SectionHead } from "./section-head";
 
 /**
- * The four markets, explored one at a time.
+ * The five markets, explored one at a time.
  *
- * Selecting a market cross-fades the stage and swaps the copy; the list itself
- * stays put so the eye never has to re-find it. On mobile the list becomes a
- * horizontal set of chips above the stage.
+ * Selecting a market does not simply cross-fade the stage: the incoming
+ * photograph opens from its bottom edge under a clip mask while settling out of
+ * a slight scale, and the statement swaps behind a mask so the words rise. The
+ * list itself stays put so the eye never has to re-find it, and a hairline
+ * travels down the left of the active market.
  */
 export function LocationExplorer() {
   const [active, setActive] = useState(0);
   const current = locations[active];
 
   return (
-    <section id="locations" className="border-t border-[var(--color-ink-hairline)] py-24 md:py-36">
+    <section id="locations" className="border-t border-[var(--color-ink-hairline)] py-24 md:py-32">
       <div className="shell">
-        <SectionHead
-          eyebrow="Where we work"
-          title="Five markets, twenty minutes apart."
-          copy={[
-            "The Costa del Sol is not one market, and treating it as one is the most expensive mistake a buyer makes here. A house moves by several million euros depending on which side of a ridge it sits on, how far it is from the water, and whether the plot behind it can ever be built on.",
-            "These are the five markets we work in, what distinguishes each of them, and the sub-areas within them that actually determine price.",
-          ]}
-        />
+        <div className="max-w-2xl">
+          <p className="meta-in seq-1 eyebrow">Where we work</p>
+          <h2 className="display mt-6 text-[clamp(2.25rem,5vw,4rem)]">
+            <span className="mask">
+              <span className="mask-line seq-2">Five markets, twenty minutes apart.</span>
+            </span>
+          </h2>
+          <p className="meta-in seq-3 mt-7 max-w-[54ch] text-base leading-relaxed text-mist">
+            The Costa del Sol is not one market, and treating it as one is the most expensive
+            mistake a buyer makes here.
+          </p>
+        </div>
 
-        <div className="reveal mt-16 grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-14">
           {/* Selector */}
           <div className="lg:col-span-4">
             <ul className="flex gap-2 overflow-x-auto pb-2 lg:block lg:gap-0 lg:overflow-visible lg:pb-0">
@@ -41,13 +46,16 @@ export function LocationExplorer() {
                       type="button"
                       onClick={() => setActive(i)}
                       aria-current={isActive ? "true" : undefined}
-                      className={[
-                        "group w-full whitespace-nowrap border-t px-4 py-4 text-left transition-colors duration-500 lg:whitespace-normal lg:px-0 lg:py-6",
-                        isActive
-                          ? "border-gold"
-                          : "border-[var(--color-ink-hairline)] hover:border-mist-dim",
-                      ].join(" ")}
+                      className="group relative w-full whitespace-nowrap border-t border-[var(--color-ink-hairline)] px-4 py-4 text-left lg:whitespace-normal lg:px-0 lg:py-6"
                     >
+                      <span
+                        aria-hidden
+                        className="absolute left-0 top-0 h-px bg-gold transition-all duration-700"
+                        style={{
+                          width: isActive ? "100%" : "0%",
+                          transitionTimingFunction: "var(--ease-luxe)",
+                        }}
+                      />
                       <span className="flex items-baseline justify-between gap-4">
                         <span
                           className={[
@@ -73,7 +81,7 @@ export function LocationExplorer() {
 
           {/* Stage */}
           <div className="lg:col-span-8">
-            <div className="relative aspect-[16/10] overflow-hidden bg-ink-raised">
+            <div className="clip-reveal relative aspect-[16/10] overflow-hidden bg-ink-raised">
               {locations.map((location, i) => (
                 <Image
                   key={location.region}
@@ -82,25 +90,35 @@ export function LocationExplorer() {
                   fill
                   sizes="(max-width: 1024px) 92vw, 60vw"
                   aria-hidden={i !== active}
-                  className="object-cover transition-opacity duration-1000"
+                  className="object-cover"
                   style={{
                     opacity: i === active ? 1 : 0,
-                    transitionTimingFunction: "var(--ease-luxe)",
+                    clipPath: i === active ? "inset(0 0 0 0)" : "inset(0 0 100% 0)",
+                    transform: i === active ? "scale(1)" : "scale(1.07)",
+                    transition:
+                      "opacity 900ms var(--ease-luxe), clip-path 900ms var(--ease-luxe), transform 1400ms var(--ease-luxe)",
                   }}
                 />
               ))}
-              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/55 to-transparent" />
             </div>
 
             <div className="mt-8">
-              {current.copy.map((paragraph, i) => (
-                <p
-                  key={i}
-                  className={`max-w-[62ch] text-base leading-relaxed text-mist ${i ? "mt-5" : ""}`}
-                >
-                  {paragraph}
-                </p>
-              ))}
+              <p
+                key={`${current.region}-statement`}
+                className="display text-[clamp(1.5rem,2.8vw,2.25rem)] leading-[1.1]"
+              >
+                <span className="mask">
+                  <span className="loc-swap mask-line">{current.statement}</span>
+                </span>
+              </p>
+              <p
+                key={`${current.region}-copy`}
+                className="loc-fade mt-5 max-w-[58ch] text-base leading-relaxed text-mist"
+              >
+                {current.copy}
+              </p>
+
               <ul className="mt-7 flex flex-wrap gap-x-3 gap-y-2">
                 {current.areas.map((area) => (
                   <li

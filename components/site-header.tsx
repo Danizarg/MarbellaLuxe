@@ -34,7 +34,7 @@ export function SiteHeader() {
   return (
     <header
       className={[
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500",
+        "site-header fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500",
         scrolled || open
           ? "border-b border-[var(--color-ink-hairline)] bg-ink/80 backdrop-blur-xl"
           : "border-b border-transparent",

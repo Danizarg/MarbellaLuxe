@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { PropertySearch } from "@/components/property-search";
 import { properties } from "@/lib/properties";
+import { locations } from "@/lib/locations";
 
 export const metadata: Metadata = {
   title: "Properties for sale",
@@ -18,8 +19,9 @@ export default function PropertiesPage() {
           Every property, in full.
         </h1>
         <p className="rise measure mt-8 text-base leading-relaxed text-mist">
-          {properties.length} residences across four markets. No teaser pricing, no cropped
-          galleries — the same detail we would put in front of you in the office.
+          {properties.length} residences across {locations.length} markets — villas, apartments,
+          penthouses, new developments, land, commercial premises and hotels. No teaser pricing and
+          no cropped galleries.
         </p>
       </header>
 

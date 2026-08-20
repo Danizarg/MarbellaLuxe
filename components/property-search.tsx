@@ -1,29 +1,51 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { locations } from "@/lib/locations";
 import { categories, formatPrice, properties, type Category } from "@/lib/properties";
 import { PropertyCard } from "./property-card";
+import { rhythmAt } from "@/lib/grid-rhythm";
+import { SelectField, type Option } from "./select-field";
+import { ResultCount } from "./result-count";
 
-type Sort = "price-desc" | "price-asc" | "built-desc" | "plot-desc";
-
-const SORTS: { id: Sort; label: string }[] = [
-  { id: "price-desc", label: "Price, high to low" },
-  { id: "price-asc", label: "Price, low to high" },
-  { id: "built-desc", label: "Largest built area" },
-  { id: "plot-desc", label: "Largest plot" },
-];
+type Sort = "featured" | "price-desc" | "price-asc" | "built-desc" | "plot-desc";
 
 const BUDGETS = [0, 500_000, 1_000_000, 2_000_000, 3_500_000, 5_000_000, 8_000_000];
+
+const typeOptions: Option[] = [
+  { value: "", label: "All types" },
+  ...categories.map((c) => ({ value: c, label: c })),
+];
+const regionOptions: Option[] = [
+  { value: "", label: "All markets" },
+  ...locations.map((l) => ({ value: l.region, label: l.region })),
+];
+const budgetOptions: Option[] = BUDGETS.map((b) => ({
+  value: String(b),
+  label: b === 0 ? "No minimum" : formatPrice(b),
+}));
+const bedOptions: Option[] = [0, 2, 3, 4, 5, 6, 7].map((b) => ({
+  value: String(b),
+  label: b === 0 ? "Any" : `${b}+`,
+}));
+const sortOptions: Option[] = [
+  { value: "featured", label: "Featured" },
+  { value: "price-desc", label: "Price, high to low" },
+  { value: "price-asc", label: "Price, low to high" },
+  { value: "built-desc", label: "Largest built area" },
+  { value: "plot-desc", label: "Largest plot" },
+];
 
 /**
  * Filtering runs in the client over the full portfolio, which is the honest
  * shape of this build. Against the live Resales-Online feed the same control
  * surface would post to the API; the filter state model would not change.
  *
- * Initial state is seeded from the query string, so the homepage search bar,
- * the footer category links and shared URLs all land here with filters applied.
+ * Two details matter more than the filtering itself. The bar is a configurator
+ * rather than a form — the site's own listbox, generous spacing, hairline
+ * separators. And when the results change the grid fades through the change
+ * instead of snapping, so a filter feels like a transition rather than a reload.
  */
 export function PropertySearch() {
   const params = useSearchParams();
@@ -32,7 +54,7 @@ export function PropertySearch() {
   const [region, setRegion] = useState(params.get("region") ?? "");
   const [min, setMin] = useState(params.get("min") ?? "0");
   const [beds, setBeds] = useState(params.get("beds") ?? "0");
-  const [sort, setSort] = useState<Sort>("price-desc");
+  const [sort, setSort] = useState<Sort>("featured");
 
   const results = useMemo(() => {
     const filtered = properties.filter(
@@ -45,6 +67,13 @@ export function PropertySearch() {
 
     return [...filtered].sort((a, b) => {
       switch (sort) {
+        // Curated order: the featured residence leads, then by price. It is one
+        // position away from price-desc, and it stops a 54-key hotel opening a
+        // portfolio of villas purely because it is 100k more expensive.
+        case "featured":
+          if (a.flagship) return -1;
+          if (b.flagship) return 1;
+          return b.price - a.price;
         case "price-asc":
           return a.price - b.price;
         case "built-desc":
@@ -57,6 +86,21 @@ export function PropertySearch() {
     });
   }, [category, region, min, beds, sort]);
 
+  /* Fade the grid through a change of results rather than snapping to it. */
+  const signature = `${category}|${region}|${min}|${beds}|${sort}`;
+  const [settled, setSettled] = useState(signature);
+  const [shifting, setShifting] = useState(false);
+
+  useEffect(() => {
+    if (signature === settled) return;
+    setShifting(true);
+    const timer = window.setTimeout(() => {
+      setSettled(signature);
+      setShifting(false);
+    }, 220);
+    return () => window.clearTimeout(timer);
+  }, [signature, settled]);
+
   const isFiltered = category !== "" || region !== "" || min !== "0" || beds !== "0";
 
   const reset = () => {
@@ -68,92 +112,80 @@ export function PropertySearch() {
 
   return (
     <>
-      {/* Filter bar — sticks under the header so it is never more than a glance away */}
-      <div className="sticky top-16 z-40 border-y border-[var(--color-ink-hairline)] bg-ink/90 backdrop-blur-xl">
-        <div className="shell flex flex-wrap items-center gap-x-7 gap-y-3 py-4">
-          <Control label="Type" value={category} onChange={setCategory}>
-            <option value="" className="bg-ink">
-              All types
-            </option>
-            {categories.map((c) => (
-              <option key={c} value={c} className="bg-ink">
-                {c}
-              </option>
-            ))}
-          </Control>
+      <div className="sticky top-16 z-40 border-y border-[var(--color-ink-hairline)] bg-ink/92 backdrop-blur-xl">
+        <div className="shell">
+          {/* Two columns on a phone rather than six stacked rows — a sticky bar
+              that eats half the viewport is worse than no sticky bar. */}
+          <div className="grid grid-cols-2 gap-x-6 gap-y-3.5 py-4 lg:grid-cols-[repeat(5,minmax(0,1fr))_auto] lg:items-center lg:gap-x-0 lg:gap-y-0 lg:divide-x lg:divide-[var(--color-ink-hairline)] lg:py-0">
+            <div className="lg:py-5 lg:pr-6">
+              <SelectField label="Type" value={category} options={typeOptions} onChange={setCategory} />
+            </div>
+            <div className="lg:px-6 lg:py-5">
+              <SelectField label="Location" value={region} options={regionOptions} onChange={setRegion} />
+            </div>
+            <div className="lg:px-6 lg:py-5">
+              <SelectField label="From" value={min} options={budgetOptions} onChange={setMin} />
+            </div>
+            <div className="lg:px-6 lg:py-5">
+              <SelectField label="Beds" value={beds} options={bedOptions} onChange={setBeds} />
+            </div>
+            <div className="lg:px-6 lg:py-5">
+              <SelectField
+                label="Sort"
+                value={sort}
+                options={sortOptions}
+                onChange={(v) => setSort(v as Sort)}
+                align="end"
+              />
+            </div>
 
-          <Control label="Location" value={region} onChange={setRegion}>
-            <option value="" className="bg-ink">
-              All markets
-            </option>
-            {locations.map((l) => (
-              <option key={l.region} value={l.region} className="bg-ink">
-                {l.region}
-              </option>
-            ))}
-          </Control>
-
-          <Control label="From" value={min} onChange={setMin}>
-            {BUDGETS.map((b) => (
-              <option key={b} value={String(b)} className="bg-ink">
-                {b === 0 ? "No minimum" : formatPrice(b)}
-              </option>
-            ))}
-          </Control>
-
-          <Control label="Beds" value={beds} onChange={setBeds}>
-            {[0, 2, 3, 4, 5, 6, 7].map((b) => (
-              <option key={b} value={String(b)} className="bg-ink">
-                {b === 0 ? "Any" : `${b}+`}
-              </option>
-            ))}
-          </Control>
-
-          <Control label="Sort" value={sort} onChange={(v) => setSort(v as Sort)}>
-            {SORTS.map((s) => (
-              <option key={s.id} value={s.id} className="bg-ink">
-                {s.label}
-              </option>
-            ))}
-          </Control>
-
-          <div className="ml-auto flex items-center gap-5">
-            <p className="numeric text-xs text-mist" role="status" aria-live="polite">
-              <span className="text-gold">{String(results.length).padStart(2, "0")}</span>{" "}
-              {results.length === 1 ? "property" : "properties"}
-            </p>
-            {isFiltered ? (
+            <div className="col-span-2 flex items-center gap-6 lg:col-span-1 lg:pl-6">
+              <ResultCount count={results.length} total={properties.length} />
               <button
                 type="button"
                 onClick={reset}
-                className="text-xs uppercase tracking-[0.15em] text-mist-dim transition-colors hover:text-bone"
+                className="whitespace-nowrap text-xs uppercase tracking-[0.15em] text-mist-dim transition-all duration-500 hover:text-bone"
+                style={{
+                  opacity: isFiltered ? 1 : 0,
+                  pointerEvents: isFiltered ? "auto" : "none",
+                }}
               >
                 Clear
               </button>
-            ) : null}
+            </div>
           </div>
         </div>
       </div>
 
       <div className="shell py-16 md:py-24">
         {results.length ? (
-          <div className="grid gap-x-8 gap-y-16 md:grid-cols-2 xl:grid-cols-3">
-            {results.map((property, i) => (
-              <PropertyCard
-                key={property.ref}
-                property={property}
-                priority={i < 3}
-                className="reveal"
-              />
-            ))}
+          <div
+            className="grid gap-x-8 gap-y-16 transition-all duration-300 md:grid-cols-2 xl:grid-cols-3"
+            style={{
+              opacity: shifting ? 0 : 1,
+              transform: shifting ? "translateY(0.75rem)" : "none",
+              transitionTimingFunction: "var(--ease-luxe)",
+            }}
+          >
+            {results.map((property, i) => {
+              const rhythm = rhythmAt(i);
+              return (
+                <PropertyCard
+                  key={property.ref}
+                  property={property}
+                  priority={i < 2}
+                  className={`reveal ${rhythm.span}`}
+                  aspect={rhythm.aspect}
+                />
+              );
+            })}
           </div>
         ) : (
           <div className="py-24 text-center">
             <p className="display text-3xl text-bone">Nothing matches that combination.</p>
             <p className="mx-auto mt-5 max-w-[52ch] text-sm leading-relaxed text-mist">
-              Our off-market list is considerably longer than our published one, and a good
-              proportion of the best properties on this coast never reach a portal at all. Tell us
-              what you are looking for and we will check it against what has not been listed.
+              Our off-market list is considerably longer than our published one. Tell us what you
+              are looking for and we will check it against what has not been listed.
             </p>
             <button
               type="button"
@@ -166,30 +198,5 @@ export function PropertySearch() {
         )}
       </div>
     </>
-  );
-}
-
-function Control({
-  label,
-  value,
-  onChange,
-  children,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  children: React.ReactNode;
-}) {
-  return (
-    <label className="flex items-baseline gap-2.5">
-      <span className="text-[0.65rem] uppercase tracking-[0.18em] text-mist-dim">{label}</span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none bg-transparent text-sm text-bone focus:outline-none"
-      >
-        {children}
-      </select>
-    </label>
   );
 }

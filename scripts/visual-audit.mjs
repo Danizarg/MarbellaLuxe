@@ -25,14 +25,19 @@ const OUT = process.env.AUDIT_DIR ?? "audit";
 
 /** [name, path, selector to scroll to (or null), fallback scrollY] */
 const SHOTS = [
-  ["home-hero", "/", null, 0],
+  ["home-intro", "/", null, 0],
+  ["home-hero", "/", null, 1100],
+  ["home-reveal-price", "/", null, 2300],
+  ["home-reveal-spec", "/", null, 3900],
+  ["home-story", "/", null, 6000],
+  ["home-interlude", "/", null, 8200],
   ["home-portfolio", "/", "#portfolio", 0],
-  ["home-flagship", "/", null, 2600],
   ["home-locations", "/", "#locations", 0],
   ["home-investment", "/", "#investment", 0],
   ["home-team", "/", "#team", 0],
   ["home-contact", "/", "#contact", 0],
   ["home-sell", "/", "#sell", 0],
+  ["home-facets", "/", null, 12600],
   ["properties", "/properties", null, 0],
   ["properties-grid", "/properties", null, 700],
   ["properties-plots", "/properties?category=Plot", null, 500],
@@ -77,16 +82,6 @@ for (const [label, width, height] of VIEWPORTS) {
 
   for (const [name, route, selector, fallbackY] of SHOTS) {
     await page.goto(BASE + route, { waitUntil: "networkidle" });
-
-    // Skip the intro so section screenshots are not obscured by it.
-    await page.evaluate(() => {
-      try {
-        sessionStorage.setItem("mlx-intro-seen", "1");
-      } catch {}
-    });
-    if (route === "/" || route.startsWith("/?")) {
-      await page.reload({ waitUntil: "networkidle" });
-    }
 
     await page.evaluate(
       ([sel, y]) => {

@@ -4,7 +4,6 @@ import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ProposalLayer } from "@/components/proposal-layer";
-import { introHeadScript } from "@/components/site-intro";
 import { site } from "@/lib/site";
 
 const inter = Inter({
@@ -44,11 +43,6 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${inter.variable} ${instrument.variable}`}>
-      <head>
-        {/* Marks the intro as already seen before first paint, so a returning
-            visitor never gets a frame of it. Must stay blocking and inline. */}
-        <script dangerouslySetInnerHTML={{ __html: introHeadScript }} />
-      </head>
       <body>
         <a
           href="#main"
