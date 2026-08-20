@@ -1,13 +1,13 @@
 # MarbellaLuxe
 
 A complete redesign of the **CENTURY 21 Luxe Marbella** website — a luxury
-real-estate agency operating across Marbella, Benahavís, Estepona and Sotogrande
-on the Costa del Sol.
+real-estate agency operating across Marbella, Benahavís, Estepona, Sotogrande and
+Mijas on the Costa del Sol.
 
-The governing idea is that **the property is the product**. The animation budget
-is spent on a single cinematic intro; after that the site is calm — properties are
-presented in a conventional grid, with large photography, full-length descriptions
-and specification laid out as data rather than as marketing copy.
+The governing idea is that **the property is the product**, and that **scroll
+should reveal information rather than just move the page**. Three moments are
+pinned and scroll-driven; everything between them is a normal page you can read,
+scan and click.
 
 It covers the agency's whole business: villas, apartments, penthouses, new
 developments, plots, commercial premises, hotels and long-term rentals, alongside
@@ -24,7 +24,7 @@ this is a working site, not a mockup.
 | Framework | Next.js 16 (App Router, Turbopack) |
 | UI | React 19, TypeScript 5.9 (strict) |
 | Styling | Tailwind CSS v4 — design tokens declared as `@theme` in `app/globals.css` |
-| Type | Instrument Serif (display) + Inter (UI), via `next/font` |
+| Type | Literata (display, wght 500 / opsz 72) + Inter (UI), via `next/font` |
 | Images | Local WebP under `public/properties`, served through `next/image` |
 | Tooling | `sharp` for the asset pipeline; `playwright-core` (on demand) for visual audits |
 
@@ -59,7 +59,7 @@ npm run build
 npm start
 ```
 
-The build must pass before any commit. 15 routes are generated; everything is
+The build must pass before any commit. 42 routes are generated; everything is
 statically prerendered except `/contact`, which reads a query parameter.
 
 ---
@@ -73,7 +73,9 @@ app/                 routes and the design system (globals.css)
   services/          service index + [slug] pages (5 services)
   about/ careers/ sell/ investment/ team/ contact/
 components/          every section of the site, one file each
+                       (intro-hero, flagship-reveal and feature-explorer are pinned)
 lib/                 site · properties · rentals · services · team · locations
+                       grid-rhythm · use-scroll-progress
 scripts/             asset pipeline, contact sheets, visual audit
 public/properties/   listing imagery, <REF>/NN.webp
 ```

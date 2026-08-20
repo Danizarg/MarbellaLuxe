@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter, Literata } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
@@ -12,10 +12,19 @@ const inter = Inter({
   display: "swap",
 });
 
-const instrument = Instrument_Serif({
+/**
+ * Literata rather than a high-contrast display serif.
+ *
+ * The previous face (Instrument Serif) is narrow and high-contrast: at hero size
+ * its hairlines read as thin and the line looks under-set against architectural
+ * photography. Literata is wider, low-contrast and has substantial stems, so it
+ * holds its weight at 90px over a photograph. The opsz axis is requested so the
+ * display sizes can use the display optical size.
+ */
+const literata = Literata({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-instrument-serif",
+  axes: ["opsz"],
+  variable: "--font-literata",
   display: "swap",
 });
 
@@ -42,7 +51,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrument.variable}`}>
+    <html lang="en" className={`${inter.variable} ${literata.variable}`}>
       <body>
         <a
           href="#main"

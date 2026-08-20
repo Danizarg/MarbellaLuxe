@@ -136,7 +136,7 @@ export function IntroHero() {
 
           {/* Two wide lines rather than three narrow ones — a horizontal
               composition sits better against the architecture behind it. */}
-          <h1 className="display mt-6 max-w-[38rem] text-[clamp(2.5rem,6.2vw,5.75rem)] md:max-w-none">
+          <h1 className="display mt-6 max-w-[38rem] text-[clamp(2.25rem,6.2vw,5.75rem)] md:max-w-none">
             {["Some houses are not listed.", "They are presented."].map((text, i) => (
               <span key={text} className="mask">
                 <span

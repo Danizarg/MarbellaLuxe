@@ -103,7 +103,7 @@ Typos in the source ("Brocker", "Frensh", "Simon DeCock") are corrected in
 - **TypeScript 5.9** (strict)
 - **Tailwind CSS v4.1.13** via `@tailwindcss/postcss`, with the design system
   declared as `@theme` tokens in `app/globals.css`
-- **next/font** — Instrument Serif (display) + Inter (UI)
+- **next/font** — Literata (display, variable, opsz axis) + Inter (UI)
 - **sharp** (devDependency) — asset pipeline and contact sheets only
 - **playwright-core** — *not* a dependency; installed on demand with
   `npm install --no-save playwright-core` for `npm run audit`
@@ -346,9 +346,15 @@ rings, and exactly one filled primary action. It is never a background wash.
 
 ### Typography
 
-- **Display** — Instrument Serif 400, `line-height: 0.94`, `letter-spacing:
-  -0.02em`, `text-wrap: balance`. Chosen over the usual Didone/Cormorant luxury
-  clichés: editorial authority without the wedding-invitation association.
+- **Display** — **Literata**, weight 500, `font-variation-settings: "opsz" 72`,
+  `line-height: 1`, `letter-spacing: -0.018em`, `text-wrap: balance`.
+  *Why this face:* it is wide and **low-contrast**, so its stems stay solid at 90px
+  over a photograph. The previous face (Instrument Serif) is narrow and
+  high-contrast — at hero size its hairlines read as thin and the line looks
+  under-set, which is the most common way a luxury headline fails. Six candidates
+  were rendered side by side at hero size on the real hero photograph before
+  choosing; the comparison is reproducible from *Known Issues*.
+  **Do not drop the weight back to 400, and do not swap in a Didone.**
 - **UI** — Inter. Eyebrows are 11px / `0.22em` tracking / uppercase.
 - **Numeric data** — `.numeric` forces tabular figures so prices and areas align
   in the spec grids.

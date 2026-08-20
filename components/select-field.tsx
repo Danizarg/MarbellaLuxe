@@ -132,7 +132,9 @@ export function SelectField({
       {/* Panel — height and opacity animate, so it opens rather than appears */}
       <div
         className={[
-          "absolute z-50 mt-4 min-w-[15rem] overflow-hidden border border-[var(--color-ink-hairline)] bg-ink/95 backdrop-blur-xl transition-[grid-template-rows,opacity] duration-500",
+          // Full trigger width on a phone; only allowed its own width once there
+          // is room, or it spills past the right edge of a two-column filter bar.
+          "absolute z-50 mt-4 w-full max-w-[calc(100vw-2.5rem)] overflow-hidden border border-[var(--color-ink-hairline)] bg-ink/95 backdrop-blur-xl transition-[grid-template-rows,opacity] duration-500 sm:w-max sm:min-w-[15rem]",
           align === "end" ? "right-0" : "left-0",
           open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0",
         ].join(" ")}

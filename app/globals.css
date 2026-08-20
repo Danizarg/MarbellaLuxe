@@ -3,8 +3,8 @@
 /* ==========================================================================
    MarbellaLuxe design system
    --------------------------------------------------------------------------
-   Ground is near-black. Type is a light editorial serif at display sizes and a
-   tight grotesk everywhere else. Gold is a hairline accent, never a fill - it
+   Ground is near-black. Type is a wide, low-contrast editorial serif at display
+   sizes and a tight grotesk everywhere else. Gold is a hairline accent, never a fill - it
    appears on rules, eyebrows and prices and nowhere else. See CLAUDE_CONTEXT.md
    -> "Design System" for the reasoning behind each decision.
    ========================================================================== */
@@ -27,7 +27,7 @@
   --color-mist: #a4a3a0;
   --color-mist-dim: #6f6e6c;
 
-  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman", serif;
+  --font-display: var(--font-literata), Georgia, "Times New Roman", serif;
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
 
   /* One easing curve for the whole site. Long tail, near-instant attack. */
@@ -89,18 +89,23 @@ body {
 /* All-caps gold eyebrow. The only place gold appears as text at small size. */
 .eyebrow {
   font-size: 0.6875rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--color-gold);
 }
 
-/* Display type: light weight, tight leading, optical negative tracking. */
+/* Display type.
+   Weight 500 and the display optical size: at hero scale a 400-weight
+   high-contrast serif reads as thin against photography, which is the single
+   most common way a luxury headline fails. Literata is wide and low-contrast, so
+   the leading has to open up from the 0.94 the previous face wanted. */
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
-  line-height: 0.94;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-variation-settings: "opsz" 72;
+  line-height: 1;
+  letter-spacing: -0.018em;
   text-wrap: balance;
 }
 

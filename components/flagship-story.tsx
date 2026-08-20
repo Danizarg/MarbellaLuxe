@@ -131,9 +131,9 @@ export function Interlude() {
     >
       <div className="shell w-full py-24">
         <p className="meta-in seq-1 eyebrow" style={{ color: "#8a7c58" }}>
-          {flagship.name} · {flagship.location}
+          {flagship.location}
         </p>
-        <p className="display mt-8 text-[clamp(3.5rem,11vw,9.5rem)] leading-[0.95]">
+        <p className="display mt-8 text-[clamp(2.75rem,9vw,7.5rem)] leading-[1.02]">
           <span className="mask">
             <span className="mask-line seq-2 numeric">1,303 m².</span>
           </span>

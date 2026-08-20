@@ -36,7 +36,9 @@ export function LocationExplorer() {
 
         <div className="mt-16 grid gap-10 lg:grid-cols-12 lg:gap-14">
           {/* Selector */}
-          <div className="lg:col-span-4">
+          {/* min-w-0: a grid item defaults to min-width:auto, so the nowrap
+              market row below forces the whole track wider than the viewport. */}
+          <div className="min-w-0 lg:col-span-4">
             <ul className="flex gap-2 overflow-x-auto pb-2 lg:block lg:gap-0 lg:overflow-visible lg:pb-0">
               {locations.map((location, i) => {
                 const isActive = i === active;
@@ -80,7 +82,7 @@ export function LocationExplorer() {
           </div>
 
           {/* Stage */}
-          <div className="lg:col-span-8">
+          <div className="min-w-0 lg:col-span-8">
             <div className="clip-reveal relative aspect-[16/10] overflow-hidden bg-ink-raised">
               {locations.map((location, i) => (
                 <Image
